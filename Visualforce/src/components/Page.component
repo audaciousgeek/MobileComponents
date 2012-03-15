@@ -1,0 +1,20 @@
+<apex:component controller="PageController">
+    <!-- general -->
+    <apex:attribute name="name" type="String" assignTo="{!config.eid}" required="true" description=""/>
+    <!--  style and behavior -->
+    <apex:attribute name="back" type="Boolean" default="false" description=""/>
+    <apex:attribute name="transition" type="String" assignTo="{!config.transition}" default="slide" description="See http://jquerymobile.com/branches/fade-out-in-transition/docs/pages/page-transitions.html"/>
+    <apex:attribute name="css" type="String" assignTo="{!config.css}" default="FIXME" description=""/>
+
+    <section id="{!name}" data-role="page" data-url="{!name}" data-add-back-btn="{!back}">
+        <apex:componentBody />
+    </section>
+    <script>
+         $V.App.registerPage('{!name}');
+         (function($) {
+             $('#{!name}').parent().replaceWith(function() {
+                 return $('#{!name}');
+             });
+         })(jQuery);
+     </script>
+</apex:component>

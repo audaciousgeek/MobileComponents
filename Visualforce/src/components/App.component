@@ -1,0 +1,49 @@
+<apex:component controller="AppController">
+    <apex:attribute name="eid" type="String" assignTo="{!config.eid}" required="false" default="app" description=""/>
+    <apex:attribute name="debug" type="Boolean" assignTo="{!config.debug}" default="false" description=""/>
+    <script>
+        $V.App.init({!configJson});
+
+        $(document).ready(function(){
+            $V.App.prepare(); /* TODO: call and store metadata */
+        });
+    </script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no;" />
+
+    <!-- <link rel="apple-touch-icon" href="/images/icon.png"/> -->
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no"/>
+
+    <apex:includeScript value="{!JqueryJsUrl}"/>
+    <apex:includeScript value="{!MobileSplitViewJsUrl}"/>
+    <apex:includeScript value="{!JqueryMobileJsUrl}"/>
+    <apex:includeScript value="{!JqueryTemplateJsUrl}"/>
+    <apex:includeScript value="{!MobileSDKJsUrl}"/>
+
+    <apex:stylesheet value="{!URLFOR($Resource.jqm11css)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.jqmSVcss)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.MobileVisualforceSDKcss)}"/>
+
+    <div id="{!eid}" style="position:absolute; top:0; bottom:0; left:0; right:0;">
+        <apex:componentBody />
+    </div>
+    
+    <style>
+        body {
+            width:100%; height:100%; 
+            overflow-x: hidden; margin: 0; 
+            -webkit-text-size-adjust:none;
+            -webkit-tap-highlight-color:rgba(0,0,0,0);
+            background-image:url('{!URLFOR($Resource.MobileVisualforceSDKImages, 'images/bg.png')}');
+        }
+        .ui-icon, .ui-icon-searchfield:after {
+            background-image: url('{!URLFOR($Resource.MobileVisualforceSDKImages, 'images/icons-18-white.png')}');
+        }
+        .ui-icon-loading {
+            background: url('{!URLFOR($Resource.MobileVisualforceSDKImages, 'images/ajax-loader.gif')}');
+        }
+    </style>
+</apex:component>

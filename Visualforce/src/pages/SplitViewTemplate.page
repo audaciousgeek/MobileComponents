@@ -1,0 +1,11 @@
+<apex:page showHeader="false"  standardStylesheets="false" cache="false" doctype="html-5.0">
+    <div data-role="panel" data-id="menu" >
+        <apex:insert name="menu"/>
+    </div>
+    <div data-role="panel" data-id="main" >
+        <apex:insert name="main"/>
+    </div>
+    <style>
+		.panel-popover { background-image:url('{!URLFOR($Resource.MobileVisualforceSDKImages, 'images/bg.png')}'); }
+    </style>
+</apex:page>

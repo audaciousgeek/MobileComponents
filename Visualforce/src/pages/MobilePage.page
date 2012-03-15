@@ -1,0 +1,31 @@
+<apex:page showHeader="false"  standardStylesheets="false" cache="false" doctype="html-5.0">
+<c:App debug="true">
+    <apex:composition template="SplitViewTemplate">
+        <apex:define name="menu">
+            <c:Page name="list">
+                <c:Header >
+                    <h1 style="font-size: 20px; margin: 0px;">All Contacts</h1>
+                </c:Header>
+                <c:Content >
+                    <c:List sobject="Contact" labelField="Name" subLabelField="Account.Name" sortByField="FirstName" listFilter="true"/>
+                </c:Content>
+            </c:Page>
+        </apex:define>
+        <apex:define name="main">
+            <c:Page name="main">
+                <c:Header >
+                    <h1 style="font-size: 22px; margin: 0px;">Contact Details</h1>
+                </c:Header>
+                <c:Content >
+                    <c:Detail sobject="Contact"/>
+                </c:Content>
+            </c:Page>
+        </apex:define>
+    </apex:composition>
+</c:App>
+<style>
+    [data-role="panel"][data-id="main"] [data-role="page"].ui-page .ui-content {
+        background: white;
+    }
+</style>
+</apex:page>

@@ -1,0 +1,51 @@
+<apex:page showHeader="false" standardStylesheets="false" cache="false" doctype="html-5.0">
+    <c:App debug="true">
+        <!--  H O M E  (single) -->
+        <c:Page name="homePage">
+            <c:Header >
+                <h1>Welcome!</h1>
+            </c:Header>
+            <c:Content >
+                <a href="#listPage" data-role="button">Contact List</a>
+                <br/><a href="/apex/RemoteMobilePage?id=sdfsfs" data-role="button">Remote Page</a>
+                <br/><a href="#mysplits" data-role="button">Go To Split View Page (FIXME)</a>
+            </c:Content>
+        </c:Page>
+
+        <!--  L I S T  (single) -->
+        <c:Page name="listPage" back="true">
+            <c:Header >
+                <h1>My Header</h1>
+            </c:Header>
+            <c:Content >
+                <c:List sobject="Contact"
+                        labelField="Name"
+                        subLabelField="Account.Name"
+                        sortByField="FirstName"
+                        filter="owner"
+                        listFilter="true"
+                        goToPage="#detailPage" />
+            </c:Content>
+            <c:Footer >
+                <!--  ,'iconCls':'star' -->
+                <c:Nav eid="listPageNav"
+                    pages="[{'page':'#homePage','name':'Home'},{'page':'#listPage','name':'List'},{'page':'/apex/RemoteMobilePage?id=sdfsfs','name':'Remote'}]"/>
+            </c:Footer>
+        </c:Page>
+
+        <!--  D E T A I L  (single) -->
+        <c:Page name="detailPage" back="true">
+            <c:Header >
+                <h1>My Header</h1>
+            </c:Header>
+            <c:Content >
+                <c:Detail sobject="Contact"/>
+            </c:Content>
+            <c:Footer >
+                <!--  ,'iconCls':'star' -->
+                <c:Nav eid="detailPageNav"
+                    pages="[{'page':'#homePage','name':'Home'},{'page':'#listPage','name':'List'}]"/>
+            </c:Footer>
+        </c:Page>
+    </c:App>
+</apex:page>
