@@ -18,10 +18,12 @@
     <meta name="format-detection" content="telephone=no"/>
 
     <apex:includeScript value="{!JqueryJsUrl}"/>
-    <apex:includeScript value="{!MobileSplitViewJsUrl}"/>
-    <apex:includeScript value="{!JqueryMobileJsUrl}"/>
     <apex:includeScript value="{!JqueryTemplateJsUrl}"/>
-    <apex:includeScript value="{!MobileSDKJsUrl}"/>
+    <apex:includeScript value="{!URLFOR($Resource[MobileSplitViewJs])}"/>
+    <apex:includeScript value="{!URLFOR($Resource[JqueryMobileJs])}"/>
+    <apex:includeScript value="{!URLFOR($Resource[MobileSDKJs])}"/>
+    
+    <apex:dynamicComponent componentValue="{!additionalScripts}" rendered="{!debug}"/>
 
     <apex:stylesheet value="{!URLFOR($Resource.jqm11css)}"/>
     <apex:stylesheet value="{!URLFOR($Resource.jqmSVcss)}"/>

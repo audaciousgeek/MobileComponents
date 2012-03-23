@@ -353,12 +353,23 @@ $V = Visualforce.Mobile;
                 if (arr[i] !== undefined) rv[arr[i]] = null;
             return rv;
         },
-        getFieldVal = function getFieldVal(rec, fieldPath) {
+        getFieldVal = function(rec, fieldPath) {
             var fieldSplit = fieldPath.split('\.');
             if (fieldSplit.length > 1) {
                 return getFieldVal(rec[fieldSplit[0]], fieldPath.substring(fieldSplit[0].length+1));
             }
             return rec[fieldSplit[0]];
+        },
+        getFieldValTemplate = function(fieldPath) {
+            var fieldParts = fieldPath.split('.'),
+                temp = '${' + fieldPath + '}';
+                
+            if (fieldParts.length > 1) {
+                while (fieldParts.pop() && fieldParts.length) {
+                    temp = ('{{if ' + fieldParts.join('.') + '}}' + temp + '{{/if}}');
+                }
+            }
+            return temp;
         },
         // messages
         handleRemoteErrs = function(result, event, $el, display) {
@@ -402,6 +413,7 @@ $V = Visualforce.Mobile;
             log: log,
             toObject: toObject,
             getFieldVal: getFieldVal,
+            getFieldValTemplate: getFieldValTemplate,
             // msgs
             handleRemoteErrs: handleRemoteErrs,
             displayMsgs: displayMsgs,
@@ -470,280 +482,6 @@ $V = Visualforce.Mobile;
             }
         }
     });
-    
-    /**
-     * Class representing list components and their lifecycle.  Extend to override standard list component functionality.
-     */
-    $V.ListComponent = $V.Component.extend({
-        init: function(config) {
-            this._super(config);
-    
-            // compile row template
-            $.template(this.config.id, this.getTemplate());
-            
-            $(document).on('listitemselect', function(e, context) {
-                var params = [];
-                if (context.config && context.config.goToPage) {
-                    // only pass data for external pages - added as query params
-                    // internal pages can use $V.App.context
-                    $.mobile.changePage(context.config.goToPage,
-                       (!$.mobile.path.isEmbeddedPage(context.config.goToPage) ? { data: context.data } : null));
-                }
-            });
-        },
-        render: function() {
-            this._super();
-            this.load(this.renderer);
-        },
-        load: function(handler) {
-            $.mobile.showPageLoadingMsg();
-            $V.App.getFn(this.config.cntrl).invoke(
-                { config: {
-                       stype: this.config.stype,
-                       labelField: this.config.labelField,
-                       subLabelField: this.config.subLabelField,
-                       sortByField: this.config.sortByField,
-                       filter: this.config.filter }
-                },
-                (function(that, fn) {
-                    return function(result, event) {
-                            fn.apply(that, arguments);
-                            $.mobile.hidePageLoadingMsg();
-                        };
-                })(this, handler)
-            );
-        },
-        renderer: function(result, event) {
-            var markup = [],
-                alphaGrp = (typeof this.config.sortByField == 'string'),
-                tmpAlpha,
-                currAlpha = '',
-                finalMarkup,
-                $ul,
-                rec;
-            if (event.status && result && result.success && result.records) {
-                this.records = {};
-                for (var i=0, len=result.records.length; i<len; i++) {
-                    rec = result.records[i];
-                    this.records[rec.Id] = rec;
-                    // TODO: validate that all fields are present: this.config.fields, this.config.sortField
-                    if (alphaGrp) {
-                        tmpAlpha = $V.App.getFieldVal(result.records[i], this.config.sortByField).substr(0, 1).toUpperCase();
-                        if (tmpAlpha !== currAlpha) {
-                            markup.push('<li data-role="list-divider"');
-                            if (this.config.listDividerStyleClass) 
-                                markup.push(' class="', this.config.listDividerStyleClass, '"');
-                            else markup.push('>');
-                            markup.push(tmpAlpha, '</li>');
-                            currAlpha = tmpAlpha;
-                        }
-                    }
-                    markup.push('<li data-item-context='+ rec['Id']);
-                    if (this.config.listItemStyleClass) markup.push(' class="' + this.config.listItemStyleClass);
-                    markup.push('>');
-                    $.tmpl(this.config.id, rec).each(function() { markup.push(this.outerHTML); });
-                    markup.push('</li>');
-                }
-                // apply generated markup
-                finalMarkup = markup.join('');
-                $V.App.log.info('listview markup', finalMarkup);
-                $ul = this.$me.find('ul');
-                $ul.html(finalMarkup);
-    
-                // after mark up is rendered, apply events
-                this.applyEvents($ul);
-                } else {
-                $V.App.handleRemoteErrs(result, event, this.$me, true);
-            }
-        },
-        applyEvents: function($el) {
-            $el.tap(
-                (function(comp) {
-                    return function(e) {
-                        var data, $target = $(e.target).closest('li', comp.$me);
-                        e.preventDefault();
-                        if ($target && !$target.is('[data-role="list-divider"]')) {
-                            comp.$me.removeClass('cellselected');
-                            $target.addClass('cellselected');
-                            data = [{config: {stype: comp.config.stype, goToPage: comp.config.goToPage}, data: comp.records[$target.attr('data-item-context')]}];
-                            // REVIEWME: narrow event firing scope to this component?
-                            $(document).trigger('listitemselect', data);
-                            $target.trigger('hide');
-                        }
-                    }
-                })(this));
-        },
-        getTemplate: function() {
-            var template = [];
-            if (this.config.labelField) template.push('<h3 class="ui-li-heading">${', this.config.labelField, '}</h3>');
-            if (this.config.subLabelField) template.push('<p class="ui-li-desc">${', this.config.subLabelField, '}</p>');
-            return template.join('');
-        }
-    });
-    
-    /**
-     * Class representing detail components and their lifecycle.  Extend to override standard detail component functionality.
-     */
-    $V.DetailComponent = $V.Component.extend(
-    (function() {
-        // REVIEWME: how come?
-        var getLayoutMarkup = function(layout) {
-            var markup = ['<div class="layout">'];
-            $.each(layout.detailSections, function() {
-                var section = this;
-                markup.push('<section class="layoutSection">');
-                if (section.heading) {
-                    markup.push('<header>');
-                    markup.push('<h4 style="font-weight: bold; font-size: 16px;  border-bottom: 3px solid #1797C0;padding: 0 0 8px; margin: 20px 25px 8px;display: inline-block;">');
-                    markup.push(section.heading);
-                    markup.push('</h4>');
-                    markup.push('<hr style="height: 1px; padding-left: 25px; border: 1px solid rgb(220, 220, 220); margin-top: -11px;"/>');
-                    markup.push('</header>');
-                }
-                markup.push('<fieldset style="margin: 0px 25px;">');
-                for (var idx=0; idx < section.items.length;) {
-                    markup.push('<div class="ui-grid-a">');
-                    for (var col=0; col < section.columns && section.items.length > (idx+col) ; col++) {
-                        var item = section.items[idx+col];
-                        if (col == 0) markup.push('<dl class="ui-block-a">');
-                        else markup.push('<dl class="ui-block-b">');
-                        markup.push('<dt class="fieldLbl">');
-                        markup.push(item.label);
-                        markup.push('</dt>');
-                        markup.push('<dd class="fieldVal">');
-                        markup.push(item.valueTemplate);
-                        markup.push('</dd>');
-                        markup.push('</dl>');
-                    }
-                    markup.push('</div>');
-                    idx += section.columns;
-                }
-                markup.push('</fieldset>');
-                markup.push('</section>');
-            });
-            markup.push('</div>');
-            return markup.join('');
-        }
-        
-        var tmplOptions = {
-            //REVIEW: Encode values?
-            value: function(type, val) {
-                var markup = [];
-                switch (type) {
-                    case 'DATETIME': markup.push(new Date(val)); 
-                         break;
-                    case 'DATE': markup.push(new Date(val).toDateString()); 
-                         break;
-                    case 'PHONE': markup.push('<a href="tel:');
-                         markup.push(val.trim().substring(0,1) == '+' ? '+' : '');
-                         markup.push(val.replace(/[^0-9]/g,''));
-                         markup.push('">' + val + '</a>');
-                         break;
-                    case 'EMAIL': markup.push('<a href="mailto:' + val.trim() + '">');
-                         markup.push(val + '</a>');
-                         break;
-                    case 'URL': markup.push('<a target="_blank" href="' + val.trim() + '">');
-                         markup.push(val + '</a>');
-                         break;
-                    case 'BOOLEAN': markup.push('<input type="checkbox"');
-                         markup.push( val ? 'checked' : 'unchecked');
-                         markup.push(' readonly disabled/>');
-                         break;
-                    default: markup.push(val);
-                }
-                return markup.join('');
-            }
-        }
-        
-        return {
-            init: function(config) {
-                var that = this;
-                that._super(config);
-                
-                $(document).on('listitemselect', function(e, context) {
-                    if (context.config.stype == that.config.stype) that.render(context.data.Id);
-                });
-            },
-            prepare: function() {
-                if (!this.prepared && !this.layouts) {
-                    this._super();
-                    //Fetching layout metadata
-                    $V.App.getFn(this.config.cntrl).invoke({config: {stype: this.config.stype}},
-                        (function(comp) {
-                            return function(result, event) {
-                                // TODO: handle errors
-                                if (result && result.success) {
-                                    comp.layouts = result.layouts;
-                                    comp.allFields = [];
-                                    $.each(comp.layouts, function() {
-                                        comp.allFields = comp.allFields.concat(this.fields);
-                                        $.template(comp.config.stype+'.'+this.recordTypeId, getLayoutMarkup(this));
-                                    });
-                                    if (comp.layouts.length > 1) comp.allFields.push('RecordTypeId');
-                                    //Filter unique fields
-                                    comp.allFields = comp.allFields.sort().filter(
-                                        function(val, idx, arr) {
-                                            return (!idx || arr[idx-1] != val);
-                                        }
-                                    );
-                                }
-                            }
-                        })(this), {escape: false}
-                    );
-                }
-            },
-            render: function(sobjectId) {
-                this._super();
-                //FIX:If there is id in Url, pick that and load, else do nothing
-                //this.load(sobjectId, this.renderer);
-                if (sobjectId) {
-                    var that = this;
-                    if (!that.allFields) setTimeout(function() { that.render(sobjectId); }, 100);
-                    else that.load(sobjectId, that.renderer);
-                }
-            },
-            load: function(sobjectId, handler) {
-                this.$me.trigger('pageload');
-                $.mobile.showPageLoadingMsg();
-                this.$me.empty();
-                $V.App.getFn(this.config.cntrl).querySObject(
-                    {stype: this.config.stype}, sobjectId, this.allFields, 
-                    (function(that, fn) {
-                        return function(result, event) {
-                            fn.apply(that, arguments);
-                            $.mobile.hidePageLoadingMsg();
-                        };
-                    })(this, handler)
-                );
-            },
-            renderer: function(result, event) {
-                var markup = [], layout, data;
-                if (event.status && result && result.success && result.records) {
-                    if ($.isArray(result.records) && result.records.length == 1) {
-                        if (this.layouts.length > 1)  {
-                            layout = this.layouts.filter(function(val) {
-                            if (result.records[0].RecordTypeId) return val.recordTypeId == result.records[0].RecordTypeId;
-                                else return val.defaultRecordTypeMapping; 
-                            })[0];
-                        } else if (this.layouts.length == 1) layout = this.layouts[0];
-                        
-                        this.$me.empty();
-                        $.tmpl(this.config.stype + '.' + layout.recordTypeId, result.records[0], tmplOptions).appendTo(this.$me);
-                        data = [{config: {stype: this.config.stype}, data: result.records[0]}];
-                        // REVIEWME: narrow event firing scope to this component?
-                        $(document).trigger('detailloaded', data);
-    
-                        $V.App.log.debug('detail markup added');
-                    } else {
-                        // REVIEWME: what if >1 recs are returned?  assume first?
-                    }
-                } else {
-                    $V.App.handleRemoteErrs(result, event, this.$me, true);
-                }
-            }
-        }//end return statement
-     })()
-    );
     
     /**
      * Class representing nav components and their lifecycle.  Extend to override standard nav component functionality.

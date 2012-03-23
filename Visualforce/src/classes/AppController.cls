@@ -61,16 +61,30 @@ public class AppController extends BaseConfigController {
         return getConfig().debug ? JQUERY_TEMPLATE_JS_DEBUG : JQUERY_TEMPLATE_JS;
     }
 
-    public String getJqueryMobileJsUrl() {
-        return getConfig().debug ? getResourceURL(JQUERY_MOBILE_JS) : getResourceURL(JQUERY_MOBILE_JS + 'Min');
+    public String getJqueryMobileJs() {
+        return getConfig().debug ? JQUERY_MOBILE_JS : (JQUERY_MOBILE_JS + 'Min');
     }
 
-    public String getMobileSplitViewJsUrl() {
-        return getConfig().debug ? getResourceURL(MOBILE_SPLIT_VIEW_JS) : getResourceURL(MOBILE_SPLIT_VIEW_JS + 'Min');
+    public String getMobileSplitViewJs() {
+        return getConfig().debug ? MOBILE_SPLIT_VIEW_JS : (MOBILE_SPLIT_VIEW_JS + 'Min');
     }
-
-    public String getMobileSDKJsUrl() {
-        return getConfig().debug ? getResourceURL(MOBILE_SDK_JS) : getResourceURL(MOBILE_SDK_JS + 'Min');
+    
+    public String getMobileSDKJs() {
+        return getConfig().debug ? MOBILE_SDK_JS : (MOBILE_SDK_JS + 'Min');
+    }
+    
+    public Component.Apex.OutputPanel getAdditionalScripts() {
+    	Component.Apex.OutputPanel panel = new Component.Apex.OutputPanel(layout='none');
+	    	
+    	Component.Apex.IncludeScript script = new Component.Apex.IncludeScript();
+    	script.expressions.value = '{!URLFOR($Resource[\'ListComponentJS\'])}';
+    	panel.childComponents.add(script);
+    	
+    	script = new Component.Apex.IncludeScript();
+        script.expressions.value = '{!URLFOR($Resource[\'DetailComponentJS\'])}';
+        panel.childComponents.add(script);
+        
+        return panel;
     }
 
     @RemoteAction
@@ -86,22 +100,5 @@ public class AppController extends BaseConfigController {
     @RemoteAction
     public static Map<String,SObjectController.FieldMetadata> getFieldMetadata(List<String> fullyQualifiedFields) {
         return SObjectController.getFieldMetadata(fullyQualifiedFields);
-    }
-
-    public static String getResourceURL(String resourceName) {
-        List<StaticResource> resourceList = [
-           SELECT Name, NamespacePrefix, SystemModStamp
-           FROM StaticResource
-           WHERE Name = :resourceName
-        ];
-
-        if (resourceList.size() == 1) {
-           String namespace = resourceList[0].NamespacePrefix;
-           return '/resource/'
-              + resourceList[0].SystemModStamp.getTime() + '/'
-              + (namespace != null && namespace != '' ? namespace + '__' : '')
-              + resourceName;
-        } else return '';
-
     }
 }
