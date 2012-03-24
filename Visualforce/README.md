@@ -6,6 +6,7 @@ This document is intended to introduce you to the app's architecture and design 
 
 - What's included
 - Installation Steps
+- Salesforce Mobile Container Setup
 - Extending Component Framework
 - Roadmap
 - Third-party Code
@@ -31,6 +32,14 @@ This document is intended to introduce you to the app's architecture and design 
     1. Remote Site: Under Setup -> Administration Setup -> Security Controls -> Remote Site Settings, create a new Remote Site and specify your org's instance URL for the Remote Site URL. Eg. if your org is on instance NA1, the Remote Site URL will be `https://na1.salesforce.com`.
 
 You should now be all set and ready to use the app! To see the sample contact viewer app in action, navigate to the following VF page: `/apex/MobilePage`
+
+## Salesforce Mobile Container Setup ##
+1. Create a new **Hybrid Force.com App** project and point the `startData` to `/apex/MobilePage`.
+2. Add the **ExternalHost** whitelist:
+	- Open the file **PhoneGap.plist** under **Supporting Files** folder in the xcode project.
+	- In the PhoneGap.plist, expand the **ExternalHosts** section and add the following 2 domains to the existing list: ajax.microsoft.com, code.jquery.com
+3. And you must be all set to run this Visualforce application as a native app.
+
 
 ## Extending Component Framework ##
 There are two ways to extend or override Mobile Web SDK’s client-side behavior: listen for and act upon events and/or extend standard Mobile Web SDK Javascript components.
