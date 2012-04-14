@@ -63,9 +63,6 @@
         
                 // setup the layout for splitview and jquerymobile will handle first page init
                 $(window).trigger('orientationchange');
-                /*setTimeout(function(){
-                  $.mobile.firstPage = firstPageMain;
-                }, 100)*/
                 
                 //REVIEW: Should this happen for any content block inside split view or only the first level children
                 menuPanel.add(mainPanel).find(':jqmData(role="content")').on('touchend touchcancel',
@@ -109,9 +106,11 @@
         mainPanel = $(':jqmData(role="panel"):jqmData(id="main")');
             
         if (menuPanel.length == 1 && mainPanel.length == 1 && menuPanel.next().is(mainPanel)) {
+            menuPanel.add(mainPanel).children(':jqmData(role="page")').find(':jqmData(position="fixed")').attr('data-position', '');
             $parentPage = menuPanel.parents(':jqmData(role="page")');
-            if (!$parentPage.length) init(menuPanel, mainPanel);
-            else {
+            if (!$parentPage.length) {
+                $(window).on('pagecontainercreate', function() { init(menuPanel, mainPanel); });
+            } else {
                 $(document).on('pagebeforechange', function(e, data) {
                     if ( typeof data.toPage != "string" ) 
                         $.support.splitview = ( data.toPage.has(menuPanel).length > 0)
@@ -130,7 +129,7 @@
            console.log('resetPageStyle called');
            $pages.each(function() {
                var $target = $(this);
-               var pageCss = {'min-height': 0, padding: '0px', height: '100%'};
+               var pageCss = {'min-height': 0/*, padding: '0px', height: '100%'*/};
                $target.css(pageCss);
            });
        }
