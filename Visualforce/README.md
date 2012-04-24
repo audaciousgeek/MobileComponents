@@ -1,6 +1,6 @@
 # Mobile Components for Visualforce #
 
-Mobile Components for Visualforce is a free, open-source force.com library to simplify the development of mobile apps. The framework contains lightweight Visualforce UI components that generate cross-platform HTML5 output that runs well on smartphones and tablets. The apps can be deployed in the browser or embedded inside Container from the Salesforce Mobile SDK. 
+Mobile Components for Visualforce is a free, open-source Force.com library to simplify the development of mobile apps. The framework contains lightweight Visualforce UI components that generate cross-platform HTML5 output that runs well on smartphones and tablets. The apps can be deployed in the browser or embedded inside Container from the Salesforce Mobile SDK. 
 Note: The library is still in heavy development and is missing certain features as well as complete documentation.
 This document is intended to introduce you to the app's architecture and design and make it as easy as possible for you to jump in, run it, and start contributing.
 
@@ -27,7 +27,7 @@ This document is intended to introduce you to the app's architecture and design 
  
 ## Installation Steps ##
 1. Grab the source code: `git clone https://github.com/ForceDotCom/MobileComponents.git`
-2. Deploy the force.com metadata under MobileComponents/Visualforce/src folder to your destination org. You can deploy that using [Force.com Migration Tool](http://wiki.developerforce.com/index.php/Force.com_Migration_Tool) or by using [Force.com IDE](http://wiki.developerforce.com/index.php/Force.com_IDE)
+2. Deploy the Force.com metadata under MobileComponents/Visualforce/src folder to your destination org. You can deploy that using [Force.com Migration Tool](http://wiki.developerforce.com/index.php/Force.com_Migration_Tool) or by using [Force.com IDE](http://wiki.developerforce.com/index.php/Force.com_IDE)
 3. Login into your destination org and setup following:
     1. Remote Site: Under Setup -> Administration Setup -> Security Controls -> Remote Site Settings, create a new Remote Site and specify your org's instance URL for the Remote Site URL. Eg. if your org is on instance NA1, the Remote Site URL will be `https://na1.salesforce.com`.
 
@@ -54,7 +54,7 @@ For Example: When a List component’s item is selected, the following with open
         });
 
 ### Extending Mobile Web SDK Javascript Components
-For more extensive customizations, Mobile Web SDK’s Javascript components may be extended to override or provide additional functionality to standard component behavior or styling.  For example, the Visualforce.Mobile.ListComponent Javascript component provides a basic list item template for each row in a list.  To customize the template, create a new Javascript class by extending Visualforce.Mobile.ListComponent and re-implement the getTemplate method.  Lastly, register the new class with the List component’s compHandler attribute.  When the List component is instantiated, an instance of the custom ListComponent will be created and its Mobile Web SDK lifecycle methods invoked.  Class customizations may call the parent class’s implementation before or after additional functionality or replace the underlying implementations altogther.  Custom implementations must extend Visualforce.Mobile.Component to hook into Mobile Web SDK lifecyle.
+For more extensive customizations, Mobile Web SDK’s Javascript components may be extended to override or provide additional functionality to standard component behavior or styling.  For example, the Visualforce.Mobile.ListComponent Javascript component provides a basic list item template for each row in a list.  To customize the template, create a new Javascript class by extending Visualforce.Mobile.ListComponent and re-implement the getTemplate method.  Lastly, register the new class with the List component’s compHandler attribute.  When the List component is instantiated, an instance of the custom ListComponent will be created and its Mobile Web SDK lifecycle methods invoked.  Class customizations may call the parent class’s implementation before or after additional functionality or replace the underlying implementations altogether.  Custom implementations must extend Visualforce.Mobile.Component to hook into Mobile Web SDK lifecycle.
 
 For Example: To provide a custom list item template:
 
@@ -83,7 +83,7 @@ This library makes use of a number of third-party components:
 ## FAQ ##
 
 Q: Why did we create this library?  
-A: HTM5 developers need a robust set of components to build mobile apps. This library provides a way to share the lessons learned creating Contact Viewer and provide re-usable components that can be plugged into Visualforce. 
+A: HTML5 developers need a robust set of components to build mobile apps. This library provides a way to share the lessons learned creating Contact Viewer and provide re-usable components that can be plugged into Visualforce. 
 
 Q: Is this library dependent on jQuery Mobile?  
 A: jQuery Mobile is primarily used for transitions and UI components and makes it easy to incorporate other JQM components and plugins in your apps. Since the primary data components, such as List and Detail component, are independent of jQuery Mobile, one can also rip out and integrate with Sencha Touch or other frameworks.
@@ -95,13 +95,13 @@ Q: Can I customize the components?
 A: Absolutely! Please share your experience
 
 Q: Where should I provide feedback and bug reports?  
-A: We’re going to use github for all collaboration.
+A: We’re going to use GitHub for all collaboration.
 
 Q: Can I distribute this in my app?  
 A: Yes
 
 Q: How is this framework supported?  
-A: This is unsupported software from the force.com development community. We will make our best efforts to fix bugs and add enhancements. We also encourage the community to fork the code and make independent changes.
+A: This is unsupported software from the Force.com development community. We will make our best efforts to fix bugs and add enhancements. We also encourage the community to fork the code and make independent changes.
 
 ## Mobile Components for Visualforce License ##
 Copyright (c) 2012, salesforce.com, inc. All rights reserved.
