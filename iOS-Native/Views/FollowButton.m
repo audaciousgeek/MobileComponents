@@ -102,7 +102,7 @@
                                    }];
 }
 
-- (void) changeStateToState:(enum FollowButtonState)state isUserAction:(BOOL)isUserAction {
+- (void) changeStateToState:(FollowButtonState)state isUserAction:(BOOL)isUserAction {
     if( !self.delegate )
         return;
     

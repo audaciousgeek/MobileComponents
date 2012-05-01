@@ -31,14 +31,14 @@
 
 @interface FollowButton : UIBarButtonItem <UIActionSheetDelegate> {}
 
-enum FollowButtonState {
+typedef enum FollowButtonState {
     FollowError = 0,
     FollowLoading,
     FollowFollowing,
     FollowNotFollowing,
-};
+} FollowButtonState;
 
-@property enum FollowButtonState followButtonState;
+@property (nonatomic) FollowButtonState followButtonState;
 
 @property (nonatomic, retain) NSString *parentId;
 @property (nonatomic, retain) NSString *followId;
@@ -52,7 +52,7 @@ enum FollowButtonState {
 - (void) loadTitle;
 - (void) loadFollowState;
 - (void) toggleFollow;
-- (void) changeStateToState:(enum FollowButtonState)state isUserAction:(BOOL)isUserAction;
+- (void) changeStateToState:(FollowButtonState)state isUserAction:(BOOL)isUserAction;
 
 @end
 
@@ -61,8 +61,8 @@ enum FollowButtonState {
 
 @optional
 
-- (void) followButtonWillChangeState:(FollowButton *)followButton toState:(enum FollowButtonState)state isUserAction:(BOOL)isUserAction;
-- (void) followButtonDidChangeState:(FollowButton *)followButton toState:(enum FollowButtonState)state isUserAction:(BOOL)isUserAction;
+- (void) followButtonWillChangeState:(FollowButton *)followButton toState:(FollowButtonState)state isUserAction:(BOOL)isUserAction;
+- (void) followButtonDidChangeState:(FollowButton *)followButton toState:(FollowButtonState)state isUserAction:(BOOL)isUserAction;
 - (void) followButtonDidReceiveError:(FollowButton *)followButton error:(NSError *)error;
 
 @end
