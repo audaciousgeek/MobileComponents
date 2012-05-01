@@ -1,6 +1,6 @@
 # iOS Native Mobile Components #
 
-A collection of native Objective-C/Cocoa iOS UI widgets and other components to simplify and jump-start your own native iOS application.
+A collection of native Objective-C/Cocoa iOS UI widgets and other components to simplify and jump-start your own native iOS application that connects to Salesforce.
 
 In this document:
 
