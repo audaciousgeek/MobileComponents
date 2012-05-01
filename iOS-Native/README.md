@@ -40,6 +40,6 @@ A `UIBarButtonItem` intended to make it easy to create a follow/unfollow toggle 
 Usage:
 
 1. Create a new button with the parent object's ID (the id of the user/record to follow/unfollow). Use the built-in constructor. `FollowButton *myFollowButton = [FollowButton followButtonWithParentId:@"00530000001emdl"];`
-2. Set the follow button's delegate to your viewcontroller and add the delegate to your viewcontroller's header. `myFollowButton.delegate = self;`
+2. Set the follow button's delegate to your viewcontroller (`myFollowButton.delegate = self;`), add the `FollowButtonDelegate`to your viewcontroller's header, and add the button itself to your view.
 3. Once your view has loaded, instruct your follow button to load its current follow state. `[myFollowButton loadFollowState];`
 4. When the user taps the button, it will call your delegate with `followButtonWillChangeState` and `followButtonDidChangeState`. Salesforce for iPad uses these delegate events to swap out the `FollowButton` in favor of an activity loading spinner to indicate to the user that a network operation is in progress, but that's entirely optional. When the follow or unfollow action is completed, the button should update its state and displayed text.
