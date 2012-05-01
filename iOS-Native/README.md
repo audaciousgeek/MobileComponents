@@ -35,6 +35,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 ### Follow Button ###
 
+![The FollowButton in Salesforce for iPad](https://github.com/forcedotcom/MobileComponents/raw/master/iOS-Native/Images/followbutton.png)
+
 A `UIBarButtonItem` intended to make it easy to create a follow/unfollow toggle between the running user and any other user or Chatter-enabled record.
 
 Usage:
