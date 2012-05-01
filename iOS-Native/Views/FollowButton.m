@@ -203,7 +203,7 @@
 
 // We've clicked a button in this contextual menu
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {        
-    if( buttonIndex == 0 ) {
+    if( buttonIndex == actionSheet.destructiveButtonIndex ) {
         [self toggleFollow];
     }
     
