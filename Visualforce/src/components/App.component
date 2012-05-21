@@ -19,7 +19,7 @@
 
     <apex:includeScript value="{!JqueryJsUrl}"/>
     <apex:includeScript value="{!JqueryTemplateJsUrl}"/>
-    <apex:includeScript value="{!URLFOR($Resource[MobileSplitViewJs])}"/>
+    <apex:includeScript value="{!URLFOR($Resource[MobileSplitViewJs])}"/> <!-- This must be in the App level. -->
     <apex:includeScript value="{!URLFOR($Resource[JqueryMobileJs])}"/>
     <apex:includeScript value="{!URLFOR($Resource[MobileSDKJs])}"/>
     

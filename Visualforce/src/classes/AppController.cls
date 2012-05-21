@@ -80,9 +80,9 @@ public class AppController extends BaseConfigController {
     	script.expressions.value = '{!URLFOR($Resource[\'ListComponentJS\'])}';
     	panel.childComponents.add(script);
     	
-    	script = new Component.Apex.IncludeScript();
-        script.expressions.value = '{!URLFOR($Resource[\'DetailComponentJS\'])}';
-        panel.childComponents.add(script);
+    	//script = new Component.Apex.IncludeScript();
+        //script.expressions.value = '{!URLFOR($Resource[\'DetailComponentJS\'])}';
+        //panel.childComponents.add(script);
         
         return panel;
     }

@@ -1,8 +1,9 @@
 <apex:component controller="DetailController">
-
+    <apex:includeScript value="{!URLFOR($Resource[DetailComponentJS])}"/>
     <apex:attribute name="sobject" type="String" required="true" assignTo="{!config.sType}" description="SObject for which list needs to be generated."/>
     <apex:attribute name="compHandler" type="String" assignTo="{!config.compHandler}" default="$V.DetailComponent" description="Custom Javascript handler to managed client-side lifecycle and behavior"/>
-
+    <apex:attribute name="debug" type="Boolean" assignTo="{!config.debug}" default="false" description=""/>
+    
     <apex:outputPanel id="layout" layout="inline">
         <apex:componentBody />
     </apex:outputPanel>

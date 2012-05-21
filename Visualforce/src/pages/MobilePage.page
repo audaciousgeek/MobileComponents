@@ -4,20 +4,26 @@
         <apex:define name="menu">
             <c:Page name="list" theme="touch">
                 <c:Header >
-                    <h1 style="font-size: 20px; margin: 0px;">All Contacts</h1>
+                    <h1 style="font-size: 20px; margin: 0px;">All Cases</h1>
                 </c:Header>
                 <c:Content >
-                    <c:List sobject="Contact" labelField="Name" subLabelField="Account.Name" sortByField="FirstName" listFilter="true"/>
+                    <c:List sobject="Case"
+                            labelField="Owner.Name"
+                            subLabelField="Priority"
+                            sortByField="Priority"
+                            listFilter="true"
+                            filter="recent"/>
                 </c:Content>
             </c:Page>
         </apex:define>
         <apex:define name="main">
             <c:Page name="main" theme="touch">
                 <c:Header >
-                    <h1 style="font-size: 22px; margin: 0px;">Contact Details</h1>
+                    <h1 style="font-size: 22px; margin: 0px;">Case Details</h1>
                 </c:Header>
                 <c:Content >
-                    <c:Detail sobject="Contact"/>
+                    <c:Detail sobject="Case"
+                              debug="true"/>
                 </c:Content>
             </c:Page>
         </apex:define>

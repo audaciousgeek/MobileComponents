@@ -49,7 +49,10 @@ Once layout info is fetched, future calls are just query calls directly from SOb
 
 public with sharing class DetailController extends SObjectController {
 
+    private final static String DETAIL_COMPONENT_JS = 'DetailComponentJS';
+    
     public virtual class DetailConfig extends SObjectConfig {
+        public Boolean debug { get; set; }
         public String cntrl = getFullyQualifiedClassName(DetailController.class);
     }
 
@@ -64,7 +67,11 @@ public with sharing class DetailController extends SObjectController {
     public DetailConfig getConfig() {
         return (DetailConfig)config;
     }
-
+    
+    public String getDetailComponentJS() {
+        return getConfig().debug ? DETAIL_COMPONENT_JS : (DETAIL_COMPONENT_JS + 'Min');
+    }
+    
     public class LayoutResponse extends RemoteResponse {
         List<Layout> layouts;
         public LayoutResponse(List<Layout> layouts) {
