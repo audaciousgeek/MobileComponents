@@ -58,6 +58,8 @@ public class ListController extends SObjectController {
         protected ListConfig config;
         public ListRequest(ListConfig config, Map<String, String> values) {
             super(values);
+            System.debug('config: ' + config);
+            System.debug('values: ' + values);
             this.config = config;
         }
 
@@ -93,7 +95,8 @@ public class ListController extends SObjectController {
     public List<SObject> getList() {
         DescribeSObjectResult descInfo = this.getDescribe();
         Map<String, SObjectField> fieldMap = descInfo.fields.getMap();
-
+        ListConfig config = (ListConfig)this.config;
+        
         String soql = 'SELECT ';
         String sortByFilter = '';
 
@@ -114,16 +117,27 @@ public class ListController extends SObjectController {
         soql = soql.subString(0, soql.length()-1);
 
         soql += (' FROM ' + this.getName());
+        
+        String whereClause = '';
 
         if (getConfig().filter != null && getConfig().filter.length() > 0) {
             if (getConfig().filter.equalsIgnoreCase('owner')) soql += (' WHERE ownerId = \'' + UserInfo.getUserId() + '\'');
-            else if (this.isFeedEnabled() && getConfig().filter.equalsIgnoreCase('follow')) {
-                soql += (' WHERE Id IN (SELECT ParentId FROM EntitySubscription WHERE parent.type = \'' + this.getName() + '\'' +
+            else if (this.isFeedEnabled() && getConfig().filter.equalsIgnoreCase('follower')) {
+                whereClause += (' Id IN (SELECT ParentId FROM EntitySubscription WHERE parent.type = \'' + this.getName() + '\'' +
                                         ' AND SubscriberID = \'' + UserInfo.getUserId() + '\')');
             }
         }
-
+        if (config.filterClause != null && config.filterClause != '') {
+            whereClause += (whereClause != '') ? ' AND ' : '';
+            whereClause += config.filterClause;//REVIEWME: Worry about escaping this?
+        }
+        
+        if (whereClause.length() > 0) {
+            soql += ' WHERE ' + whereClause;
+        }
+        
         soql += (sortByFilter + ' LIMIT 500'); // FIXME: reduce to much less, say 25 or 50, at most
+        System.debug('soql: ' + soql);
 
         return Database.query(soql);
     }

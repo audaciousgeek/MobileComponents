@@ -1,17 +1,23 @@
 <apex:component controller="ListController">
     <apex:includeScript value="{!URLFOR($Resource[ListComponentJS])}"/>
     
+    <!-- Content -->
     <apex:attribute name="sobject" type="String" required="true" assignTo="{!config.sType}" description=""/>
+    <apex:attribute name="filter" type="String" required="false" assignTo="{!config.filter}" description="owner|recent|follower"/>
+    <apex:attribute name="filterClause" type="String" required="false" assignTo="{!config.filterClause}"
+                    description="SOQL WHERE clause to use to filter list records."/>
+    <apex:attribute name="sortByField" type="String" required="true" assignTo="{!config.sortByField}" description=""/>
+    <!-- UI -->
     <apex:attribute name="labelField" type="String" required="true" assignTo="{!config.labelField}" description=""/>
     <apex:attribute name="subLabelField" type="String" required="true" assignTo="{!config.subLabelField}" description=""/>
-    <apex:attribute name="sortByField" type="String" required="true" assignTo="{!config.sortByField}" description=""/>
-    <apex:attribute name="filter" type="String" required="false" assignTo="{!config.filter}" description="owner|recent|follower"/>
     <apex:attribute name="listItemStyleClass" type="String" assignTo="{!config.listItemStyleClass}" description=""/>
     <apex:attribute name="listDividerStyleClass" type="String" assignTo="{!config.listDividerStyleClass}" description=""/>
     <apex:attribute name="listDividerStyleClass" type="String" assignTo="{!config.listDividerStyleClass}" description=""/>
     <apex:attribute name="listFilter" type="Boolean" default="false" description=""/>
+    <!-- Behaviour -->
     <apex:attribute name="nextPage" type="String" assignTo="{!config.nextPage}" description=""/>
-    <apex:attribute name="jsCtlrName" type="String" assignTo="{!config.jsCtlrName}" default="$V.ListComponent" description="Custom Javascript handler to manage client-side lifecycle and behavior."/>
+    <apex:attribute name="jsCtlrName" type="String" assignTo="{!config.jsCtlrName}" default="$V.ListComponent"
+                    description="Custom Javascript handler to manage client-side lifecycle and behavior."/>
     <apex:attribute name="debug" type="Boolean" assignTo="{!config.debug}" default="false" description=""/>
     
     <apex:outputPanel layout="inline" id="list">

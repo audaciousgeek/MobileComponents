@@ -32,7 +32,8 @@
                        labelField: this.config.labelField,
                        subLabelField: this.config.subLabelField,
                        sortByField: this.config.sortByField,
-                       filter: this.config.filter }
+                       filter: this.config.filter,
+                       filterClause: this.config.filterClause }
                 },
                 (function(that, fn) {
                     return function(result, event) {

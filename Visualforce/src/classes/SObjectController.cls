@@ -35,7 +35,7 @@ public with sharing abstract class SObjectController extends BaseConfigControlle
     public virtual class SObjectConfig extends BaseConfig {
         public String sid { get; set; }
         public String stype { get; set; }
-        public String whereStmt { get; set; }
+        public String filterClause { get; set; }
         public String sortByField { get; set; }
         public Integer queryLimit { get; set; }
         public List<String> fields { get; set; } // metadata lookup
@@ -111,7 +111,7 @@ public with sharing abstract class SObjectController extends BaseConfigControlle
 
         return SOBJECT_DESCRIBE;
     }
-
+    
     private void initializeSObject() {
         if (config == null || !(config instanceof SObjectConfig) || ((SObjectConfig)config).stype == null)
            throw new AppUtil.AppException('Expected sobject type value');
@@ -147,6 +147,7 @@ public with sharing abstract class SObjectController extends BaseConfigControlle
     public List<SObject> querySObject(Set<String> fieldsToQuery, List<Id> ids) {
         
         Map<String, SObjectField> fieldMap = this.getDescribe().fields.getMap();
+        SObjectController.SObjectConfig config = (SObjectController.SObjectConfig)this.config;
         
         String soql = 'SELECT ';
         
@@ -160,7 +161,11 @@ public with sharing abstract class SObjectController extends BaseConfigControlle
         
         if (ids != null && !ids.isEmpty()) {
         	String idsFilter = AppUtil.createCSVFromList(ids, true);
-        	soql += ' WHERE id IN(' + idsFilter + ')';
+        	soql += ' WHERE id IN (' + idsFilter + ')';
+        }
+        System.debug('config: ' + config);
+        if (config.filterClause != null && config.filterClause != '') {
+            soql += ' AND ' + config.filterClause;//REVIEWME: Worry about escaping this for safety?
         }
         
         System.debug(soql);
