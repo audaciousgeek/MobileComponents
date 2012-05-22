@@ -12,11 +12,11 @@
             
             $(document).on('listitemselect', function(e, context) {
                 var params = [];
-                if (context.config && context.config.goToPage) {
+                if (context.config && context.config.nextPage) {
                     // only pass data for external pages - added as query params
                     // internal pages can use $V.App.context
-                    $.mobile.changePage(context.config.goToPage,
-                       (!$.mobile.path.isEmbeddedPage(context.config.goToPage) ? { data: context.data } : null));
+                    $.mobile.changePage(context.config.nextPage,
+                       (!$.mobile.path.isEmbeddedPage(context.config.nextPage) ? { data: context.data } : null));
                 }
             });
         },
@@ -97,7 +97,7 @@
                         if ($target && !$target.is('[data-role="list-divider"]')) {
                             comp.$me.removeClass('cellselected');
                             $target.addClass('cellselected');
-                            data = [{config: {stype: comp.config.stype, goToPage: comp.config.goToPage}, data: comp.records[$target.attr('data-item-context')]}];
+                            data = [{config: {stype: comp.config.stype, nextPage: comp.config.nextPage}, data: comp.records[$target.attr('data-item-context')]}];
                             // REVIEWME: narrow event firing scope to this component?
                             $(document).trigger('listitemselect', data);
                             $target.trigger('hide');

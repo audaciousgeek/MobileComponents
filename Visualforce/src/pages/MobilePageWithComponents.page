@@ -29,7 +29,7 @@
                         sortByField="FirstName"
                         filter="owner"
                         listFilter="true"
-                        goToPage="#detailPage"
+                        nextPage="#detailPage"
                         debug="true"/>
             </c:Content>
             <c:Footer >

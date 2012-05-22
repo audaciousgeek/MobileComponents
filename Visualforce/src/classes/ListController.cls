@@ -48,8 +48,7 @@ public class ListController extends SObjectController {
         public String filter { get; set; }
         public String listItemStyleClass { get; set; }
         public String listDividerStyleClass { get; set; }
-        public String goToPage { get; set; } // FIXME: rename
-
+        public String nextPage { get; set; }
 
         public String serverCtlrName = getFullyQualifiedClassName(ListController.class);
     }
