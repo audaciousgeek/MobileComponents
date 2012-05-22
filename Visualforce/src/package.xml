@@ -47,6 +47,8 @@
         <members>MobileVisualforceSDKcss</members>
         <members>MobileVisualforceSDKjs</members>
         <members>MobileVisualforceSDKjsMin</members>
+        <members>NavComponentJS</members>
+        <members>PageComponentJS</members>
         <members>jqm11css</members>
         <members>jqm11js</members>
         <members>jqm11jsMin</members>

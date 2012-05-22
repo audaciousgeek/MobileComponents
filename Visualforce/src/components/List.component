@@ -1,5 +1,6 @@
 <apex:component controller="ListController">
-
+    <apex:includeScript value="{!URLFOR($Resource[ListComponentJS])}"/>
+    
     <apex:attribute name="sobject" type="String" required="true" assignTo="{!config.sType}" description=""/>
     <apex:attribute name="labelField" type="String" required="true" assignTo="{!config.labelField}" description=""/>
     <apex:attribute name="subLabelField" type="String" required="true" assignTo="{!config.subLabelField}" description=""/>
@@ -11,7 +12,8 @@
     <apex:attribute name="listFilter" type="Boolean" default="false" description=""/>
     <apex:attribute name="goToPage" type="String" assignTo="{!config.goToPage}" description=""/>
     <apex:attribute name="jsCtlrName" type="String" assignTo="{!config.jsCtlrName}" default="$V.ListComponent" description="Custom Javascript handler to manage client-side lifecycle and behavior."/>
-
+    <apex:attribute name="debug" type="Boolean" assignTo="{!config.debug}" default="false" description=""/>
+    
     <apex:outputPanel layout="inline" id="list">
        <ul data-role="listview" data-filter="{!listFilter}"></ul>
     </apex:outputPanel>

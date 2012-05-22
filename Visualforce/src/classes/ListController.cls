@@ -28,10 +28,13 @@
  * Controller for List component.
  */
 public class ListController extends SObjectController {
-
+    
+    private final static String LIST_COMPONENT_JS = 'ListComponentJS';
+    
     // config for list component
     public virtual class ListConfig extends SObjectConfig {
 
+        public Boolean debug { get; set; }
         public String labelField { get;
             set {
                 labelField = value;
@@ -76,7 +79,11 @@ public class ListController extends SObjectController {
     public ListConfig getConfig() {
         return (ListConfig)config;
     }
-
+    
+    public String getListComponentJS() {
+        return getConfig().debug ? LIST_COMPONENT_JS : (LIST_COMPONENT_JS + 'Min');
+    }
+    
     @RemoteAction
     public static SObjectResponse invoke(ListRequest listRequest) {
         ListController controller = new ListController(listRequest.getConfig());

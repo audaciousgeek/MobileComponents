@@ -1,8 +1,12 @@
 <apex:component controller="NavController">
+    <apex:includeScript value="{!URLFOR($Resource[NavComponentJS])}"/>
+    
     <apex:attribute name="compElemId" type="String" required="true" assignTo="{!config.compElemId}" description=""/>
     <apex:attribute name="pages" type="String" required="true" assignTo="{!config.pages}"
         description="JSON format: [{'page':'<page id or url>','name':'<link name>','iconCls':'<optional icon class>'},...]"/>
     <apex:attribute name="jsCtlrName" type="String" assignTo="{!config.jsCtlrName}" default="$V.NavComponent" description="Custom Javascript handler to manage client-side lifecycle and behavior."/>
+    <apex:attribute name="debug" type="Boolean" assignTo="{!config.debug}" default="false" description=""/>
+    
     <div id="{!compElemId}">
         <ul></ul>
     </div><!-- /navbar -->

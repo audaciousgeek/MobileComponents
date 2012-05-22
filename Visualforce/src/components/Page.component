@@ -1,4 +1,6 @@
 <apex:component controller="PageController">
+    <apex:includeScript value="{!URLFOR($Resource[PageComponentJS])}"/>
+    
     <!-- general -->
     <apex:attribute name="name" type="String" assignTo="{!config.compElemId}" required="true" description=""/>
     <!--  style and behavior -->
@@ -6,7 +8,8 @@
     <apex:attribute name="transition" type="String" assignTo="{!config.transition}" default="slide" description="See http://jquerymobile.com/branches/fade-out-in-transition/docs/pages/page-transitions.html"/>
     <apex:attribute name="css" type="String" assignTo="{!config.css}" default="FIXME" description=""/>
     <apex:attribute name="theme" type="String" default="c" description="The style theme for the page."/>
-
+    <apex:attribute name="debug" type="Boolean" assignTo="{!config.debug}" default="false" description=""/>
+    
     <section id="{!config.compElemId}" data-role="page" data-url="{!config.compElemId}" data-add-back-btn="{!back}" data-theme="{!theme}">
         <apex:componentBody />
     </section>

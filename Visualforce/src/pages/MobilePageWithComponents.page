@@ -1,7 +1,9 @@
 <apex:page showHeader="false" standardStylesheets="false" cache="false" doctype="html-5.0">
     <c:App debug="true">
         <!--  H O M E  (single) -->
-        <c:Page name="homePage" theme="touch">
+        <c:Page name="homePage"
+                theme="touch"
+                debug="true">
             <c:Header >
                 <h1>Welcome!</h1>
             </c:Header>
@@ -13,7 +15,10 @@
         </c:Page>
 
         <!--  L I S T  (single) -->
-        <c:Page name="listPage" back="true" theme="touch">
+        <c:Page name="listPage"
+                back="true"
+                theme="touch"
+                debug="true">
             <c:Header >
                 <h1>My Header</h1>
             </c:Header>
@@ -24,27 +29,34 @@
                         sortByField="FirstName"
                         filter="owner"
                         listFilter="true"
-                        goToPage="#detailPage" />
+                        goToPage="#detailPage"
+                        debug="true"/>
             </c:Content>
             <c:Footer >
                 <!--  ,'iconCls':'star' -->
                 <c:Nav compElemId="listPageNav"
-                    pages="[{'page':'#homePage','name':'Home'},{'page':'#listPage','name':'List'},{'page':'/apex/RemoteMobilePage?id=sdfsfs','name':'Remote'}]"/>
+                    pages="[{'page':'#homePage','name':'Home'},{'page':'#listPage','name':'List'},{'page':'/apex/RemoteMobilePage?id=sdfsfs','name':'Remote'}]"
+                    debug="true"/>
             </c:Footer>
         </c:Page>
 
         <!--  D E T A I L  (single) -->
-        <c:Page name="detailPage" back="true" theme="touch">
+        <c:Page name="detailPage"
+                back="true"
+                theme="touch"
+                debug="true">
             <c:Header >
                 <h1>My Header</h1>
             </c:Header>
             <c:Content >
-                <c:Detail sobject="Contact"/>
+                <c:Detail sobject="Contact"
+                          debug="true"/>
             </c:Content>
             <c:Footer >
                 <!--  ,'iconCls':'star' -->
                 <c:Nav compElemId="detailPageNav"
-                    pages="[{'page':'#homePage','name':'Home'},{'page':'#listPage','name':'List'}]"/>
+                    pages="[{'page':'#homePage','name':'Home'},{'page':'#listPage','name':'List'}]"
+                    debug="true"/>
             </c:Footer>
         </c:Page>
     </c:App>

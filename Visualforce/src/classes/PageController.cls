@@ -28,12 +28,15 @@
  * Controller for Page component.
  */
 public class PageController extends BaseConfigController {
-
+    
+    private final static String PAGE_COMPONENT_JS = 'PageComponentJS';
+    
     /**
      * Page component config options.
      */
     public virtual class PageConfig extends BaseConfig {
         // behavior and styling
+        public Boolean debug { get; set; }
         public String transition { get; set; }
         public String css { get; set; }
 
@@ -43,7 +46,11 @@ public class PageController extends BaseConfigController {
     public PageController() {
         super(new PageConfig());
     }
-
+    
+    public String getPageComponentJS() {
+        return getConfig().debug ? PAGE_COMPONENT_JS : (PAGE_COMPONENT_JS + 'Min');
+    }
+    
     public PageConfig getConfig() {
         return (PageConfig)config;
     }

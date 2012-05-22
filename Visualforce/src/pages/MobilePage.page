@@ -2,7 +2,9 @@
 <c:App debug="true">
     <apex:composition template="SplitViewTemplate">
         <apex:define name="menu">
-            <c:Page name="list" theme="touch">
+            <c:Page name="list"
+                    theme="touch"
+                    debug="true">
                 <c:Header >
                     <h1 style="font-size: 20px; margin: 0px;">All Cases</h1>
                 </c:Header>
@@ -12,12 +14,15 @@
                             subLabelField="Priority"
                             sortByField="Priority"
                             listFilter="true"
-                            filter="recent"/>
+                            filter="recent"
+                            debug="true"/>
                 </c:Content>
             </c:Page>
         </apex:define>
         <apex:define name="main">
-            <c:Page name="main" theme="touch">
+            <c:Page name="main"
+                    theme="touch"
+                    debug="true">
                 <c:Header >
                     <h1 style="font-size: 22px; margin: 0px;">Case Details</h1>
                 </c:Header>

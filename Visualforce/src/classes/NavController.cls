@@ -29,17 +29,24 @@
  */
 public class NavController extends BaseConfigController {
 
+    private final static String NAV_COMPONENT_JS = 'NavComponentJS';
+    
     /**
      * Nav component config options.
      */
     public virtual class NavConfig extends BaseConfig {
+        public Boolean debug { get; set; }
         public String pages { get; set; }
     }
 
     public NavController() {
         super(new NavConfig());
     }
-
+    
+    public String getNavComponentJS() {
+        return getConfig().debug ? NAV_COMPONENT_JS : (NAV_COMPONENT_JS + 'Min');
+    }
+    
     public NavConfig getConfig() {
         return (NavConfig)config;
     }
