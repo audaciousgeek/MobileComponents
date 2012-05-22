@@ -26,7 +26,7 @@
         },
         load: function(handler) {
             $.mobile.showPageLoadingMsg();
-            $V.App.getFn(this.config.cntrl).invoke(
+            $V.App.getFn(this.config.serverCtlrName).invoke(
                 { config: {
                        stype: this.config.stype,
                        labelField: this.config.labelField,

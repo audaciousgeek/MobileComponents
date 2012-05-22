@@ -53,7 +53,7 @@ public with sharing class DetailController extends SObjectController {
     
     public virtual class DetailConfig extends SObjectConfig {
         public Boolean debug { get; set; }
-        public String cntrl = getFullyQualifiedClassName(DetailController.class);
+        public String serverCtlrName = getFullyQualifiedClassName(DetailController.class);
     }
 
     public DetailController() {

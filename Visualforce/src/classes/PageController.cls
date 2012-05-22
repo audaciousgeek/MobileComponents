@@ -37,7 +37,7 @@ public class PageController extends BaseConfigController {
         public String transition { get; set; }
         public String css { get; set; }
 
-        String cntrl = getFullyQualifiedClassName(PageController.class);
+        String serverCtlrName = getFullyQualifiedClassName(PageController.class);
     }
 
     public PageController() {

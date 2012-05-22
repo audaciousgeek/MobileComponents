@@ -87,7 +87,7 @@
                 if (!this.prepared && !this.layouts) {
                     this._super();
                     //Fetching layout metadata
-                    $V.App.getFn(this.config.cntrl).invoke({config: {stype: this.config.stype}},
+                    $V.App.getFn(this.config.serverCtlrName).invoke({config: {stype: this.config.stype}},
                         (function(comp) {
                             return function(result, event) {
                                 // TODO: handle errors
@@ -125,7 +125,7 @@
                 this.$me.trigger('pageload');
                 $.mobile.showPageLoadingMsg();
                 this.$me.empty();
-                $V.App.getFn(this.config.cntrl).querySObject(
+                $V.App.getFn(this.config.serverCtlrName).querySObject(
                     {stype: this.config.stype}, sobjectId, this.allFields, 
                     (function(that, fn) {
                         return function(result, event) {

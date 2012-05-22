@@ -1,5 +1,5 @@
 <apex:component controller="AppController">
-    <apex:attribute name="eid" type="String" assignTo="{!config.eid}" required="false" default="app" description=""/>
+    <apex:attribute name="compElemId" type="String" assignTo="{!config.compElemId}" required="false" default="app" description=""/>
     <apex:attribute name="debug" type="Boolean" assignTo="{!config.debug}" default="false" description=""/>
     <script>
         $V.App.init({!configJson});
@@ -29,7 +29,7 @@
     <apex:stylesheet value="{!URLFOR($Resource.jqmSVcss)}"/>
     <apex:stylesheet value="{!URLFOR($Resource.MobileVisualforceSDKcss)}"/>
 
-    <div id="{!eid}" style="position:absolute; top:0; bottom:0; left:0; right:0;">
+    <div id="{!compElemId}" style="position:absolute; top:0; bottom:0; left:0; right:0;">
         <apex:componentBody />
     </div>
     

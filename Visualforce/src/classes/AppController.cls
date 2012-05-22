@@ -42,7 +42,7 @@ public class AppController extends BaseConfigController {
      */
     public virtual class AppConfig extends BaseConfig {
         public Boolean debug { get; set; }
-        String cntrl = getFullyQualifiedClassName(AppController.class);
+        String serverCtlrName = getFullyQualifiedClassName(AppController.class);
     }
 
     public AppController() {

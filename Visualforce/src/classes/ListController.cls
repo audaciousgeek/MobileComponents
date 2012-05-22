@@ -48,7 +48,7 @@ public class ListController extends SObjectController {
         public String goToPage { get; set; } // FIXME: rename
 
 
-        public String cntrl = getFullyQualifiedClassName(ListController.class);
+        public String serverCtlrName = getFullyQualifiedClassName(ListController.class);
     }
 
     // incoming list-based remote request

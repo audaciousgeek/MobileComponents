@@ -10,7 +10,7 @@
     <apex:attribute name="listDividerStyleClass" type="String" assignTo="{!config.listDividerStyleClass}" description=""/>
     <apex:attribute name="listFilter" type="Boolean" default="false" description=""/>
     <apex:attribute name="goToPage" type="String" assignTo="{!config.goToPage}" description=""/>
-    <apex:attribute name="compHandler" type="String" assignTo="{!config.compHandler}" default="$V.ListComponent" description="Custom Javascript handler to managed client-side lifecycle and behavior"/>
+    <apex:attribute name="jsCtlrName" type="String" assignTo="{!config.jsCtlrName}" default="$V.ListComponent" description="Custom Javascript handler to manage client-side lifecycle and behavior."/>
 
     <apex:outputPanel layout="inline" id="list">
        <ul data-role="listview" data-filter="{!listFilter}"></ul>

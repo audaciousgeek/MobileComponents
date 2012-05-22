@@ -239,11 +239,12 @@ $V = Visualforce.Mobile;
         registerComponent = function(id, config) {
             var $parentPage, page, handlerFn, handlerFnExt, comp;
             
+            //FIXME: id = component.id, which is on config.compElemId. Why not just use that?
             config.id = id || config.id;
             if (!config.id) throw Error('Component must have id');
             
-            handlerFn = $V.App.getFn(config.compHandler);
-            if (!handlerFn) throw Error('Component handler function is not defined or not found (' + config.compHandler + ')');
+            handlerFn = $V.App.getFn(config.jsCtlrName);
+            if (!handlerFn) throw Error('Component handler function is not defined or not found (' + config.jsCtlrName + ')');
             if (this.components[config.id]) return; // avoid re-registering same component
             comp = new handlerFn(config);
             if (!(comp instanceof $V.Component)) throw Error('Component handler must extend Visualforce.Mobile.Component');
@@ -267,11 +268,11 @@ $V = Visualforce.Mobile;
         prepare = function() {
             // change viewport designation
             $('span').removeClass('ui-mobile-viewport');
-            $('#'+this.config.eid).addClass("ui-mobile-viewport");
-            $.mobile.pageContainer = $('#'+this.config.eid);
+            $('#'+this.config.compElemId).addClass("ui-mobile-viewport");
+            $.mobile.pageContainer = $('#'+this.config.compElemId);
     
             // fetch user metadata
-            $V.App.getFn(this.config.cntrl).getUser(
+            $V.App.getFn(this.config.serverCtlrName).getUser(
                 (function(that) {
                     return function(result, event) {
                         if (event.status && result && !result.errors) {
@@ -285,7 +286,7 @@ $V = Visualforce.Mobile;
     
             // fetch field metadata
             if (this.config.fields && this.config.fields.length > 0) {
-            $V.App.getFn(this.config.cntrl).getFieldMetadata(
+            $V.App.getFn(this.config.serverCtlrName).getFieldMetadata(
                     this.config.fields,
                     (function(that) {
                         return function(result, event) {

@@ -28,7 +28,7 @@
             </c:Content>
             <c:Footer >
                 <!--  ,'iconCls':'star' -->
-                <c:Nav eid="listPageNav"
+                <c:Nav compElemId="listPageNav"
                     pages="[{'page':'#homePage','name':'Home'},{'page':'#listPage','name':'List'},{'page':'/apex/RemoteMobilePage?id=sdfsfs','name':'Remote'}]"/>
             </c:Footer>
         </c:Page>
@@ -43,7 +43,7 @@
             </c:Content>
             <c:Footer >
                 <!--  ,'iconCls':'star' -->
-                <c:Nav eid="detailPageNav"
+                <c:Nav compElemId="detailPageNav"
                     pages="[{'page':'#homePage','name':'Home'},{'page':'#listPage','name':'List'}]"/>
             </c:Footer>
         </c:Page>
