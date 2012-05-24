@@ -30,7 +30,7 @@
  */
 public virtual class BaseConfig {
 
-    public String compElemId { get; set; }
+    public String elemId { get; set; }
     public String jsCtlrName { get; set; }
 
     protected List<String> toArray(String str) {

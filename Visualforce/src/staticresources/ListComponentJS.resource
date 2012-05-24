@@ -8,7 +8,7 @@
             this._super(config);
     
             // compile row template
-            $.template(this.config.id, this.getTemplate());
+            $.template(this.config.elemId, this.getTemplate());
             
             $(document).on('listitemselect', function(e, context) {
                 var params = [];
@@ -74,7 +74,7 @@
                     markup.push('<li data-item-context='+ rec['Id']);
                     if (this.config.listItemStyleClass) markup.push(' class="' + this.config.listItemStyleClass);
                     markup.push('>');
-                    $.tmpl(this.config.id, rec).each(function() { markup.push(this.outerHTML); });
+                    $.tmpl(this.config.elemId, rec).each(function() { markup.push(this.outerHTML); });
                     markup.push('</li>');
                 }
                 // apply generated markup

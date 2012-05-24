@@ -1,7 +1,9 @@
 <apex:component controller="AppController">
-    <apex:attribute name="compElemId" type="String" assignTo="{!config.compElemId}" required="false" default="app" description=""/>
+    <apex:attribute name="elemId" type="String" assignTo="{!config.elemId}" required="false" default="app" description=""/>
     <apex:attribute name="debug" type="Boolean" assignTo="{!config.debug}" default="false" description=""/>
+    
     <script>
+        //TODO: Consider just calling 'prepare' from 'init', and move 'init' to onReady.
         $V.App.init({!configJson});
 
         $(document).ready(function(){
@@ -29,7 +31,7 @@
     <apex:stylesheet value="{!URLFOR($Resource.jqmSVcss)}"/>
     <apex:stylesheet value="{!URLFOR($Resource.MobileVisualforceSDKcss)}"/>
 
-    <div id="{!compElemId}" style="position:absolute; top:0; bottom:0; left:0; right:0;">
+    <div id="{!elemId}" style="position:absolute; top:0; bottom:0; left:0; right:0;">
         <apex:componentBody />
     </div>
     

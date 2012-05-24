@@ -1,6 +1,4 @@
 <apex:component controller="ListController">
-    <apex:includeScript value="{!URLFOR($Resource[ListComponentJS])}"/>
-    
     <!-- Content -->
     <apex:attribute name="sobject" type="String" required="true" assignTo="{!config.sType}" description=""/>
     <apex:attribute name="filter" type="String" required="false" assignTo="{!config.filter}" description="owner|recent|follower"/>
@@ -20,9 +18,13 @@
                     description="Custom Javascript handler to manage client-side lifecycle and behavior."/>
     <apex:attribute name="debug" type="Boolean" assignTo="{!config.debug}" default="false" description=""/>
     
+    <!-- VF/HTML -->
+    <apex:includeScript value="{!URLFOR($Resource[ListComponentJS])}"/>
+    
     <apex:outputPanel layout="inline" id="list">
        <ul data-role="listview" data-filter="{!listFilter}"></ul>
     </apex:outputPanel>
 
     <script>$V.App.registerComponent('{!$Component.list}', {!configJson});</script>
+    
 </apex:component>

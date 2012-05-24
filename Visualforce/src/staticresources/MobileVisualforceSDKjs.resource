@@ -115,6 +115,7 @@ $V = Visualforce.Mobile;
      */
     $V.App = (function() {
         // privates
+        //TODO: Consider renaming config to compState
         var init = function(config) {
                 this.config = config;
                 this.pages = {};
@@ -157,7 +158,7 @@ $V = Visualforce.Mobile;
                             page = that.getPage(parseHash(toPage));
                             // render page
                             if (page && page.rerender) {
-                                that.log.debug('Rerendering page: ' + page.config.id);
+                                that.log.debug('Rerendering page: ' + page.config.elemId);
                                 page.rerender();
                             }
                         }
@@ -173,8 +174,8 @@ $V = Visualforce.Mobile;
                             page = that.getPage(evt.target.id);
                             if (page && !(page instanceof $V.Page)) {
                                 page = new $V.Page(page);
-                                that.pages[page.config.id] = page;
-                                that.log.debug('Init\'ing page: ' + page.config.id);
+                                that.pages[page.config.elemId] = page;
+                                that.log.debug('Init\'ing page: ' + page.config.elemId);
                             }
                         }
                     }
@@ -188,7 +189,7 @@ $V = Visualforce.Mobile;
                         if (evt.target.id) {
                             page = that.getPage(evt.target.id);
                             if (page && page.render) {
-                                that.log.debug('Rendering page: ' + page.config.id);
+                                that.log.debug('Rendering page: ' + page.config.elemId);
                                 page.render();
                             }
                         }
@@ -221,43 +222,44 @@ $V = Visualforce.Mobile;
                 }
             })(this);
         },
-        registerPage = function(id, page) {
-            if (!id) {
+        registerPage = function(elemId, page) {
+            if (!elemId) {
                 //JQM adds a page automatically if no page found.
-                this.log.info('Ignore page registration. No id specified'); 
+                this.log.info('Ignore page registration. No elemId parameter specified.'); 
                 return;
             }
             
-            page = page || this.pages[id] || new $V.Page(id);
-            if (!(page instanceof $V.Page)) throw Error('Page must be instance of $V.Page');
-            if (id != page.config.id) throw Error('Id and Page config id must match.'); 
+            page = page || this.pages[elemId] || new $V.Page(elemId);
+            if (!(page instanceof $V.Page)) throw Error('Page must be an instance of $V.Page.');
+            if (elemId != page.config.elemId) throw Error('Id and Page config elemId must match.'); 
             
-            this.pages[id] = page;
+            this.pages[elemId] = page;
                             
             return page;
         },
         // 1) Store component element Id and its JS controller.
         // 2) Attach component to a page.
         // 3) Pull fields from component and save to config.
-        registerComponent = function(id, config) {
-            var $parentPage, page, handlerFn, handlerFnExt, compCtlr;
+        //TODO: Consider renaming config to compState.
+        registerComponent = function(elemId, config) {
+            var $parentPage, page, compCtlrFn, handlerFnExt, compCtlr;
             
-            //FIXME: id = component.id, which is on config.compElemId. Why not just use that?
-            config.id = id || config.id;
-            if (!config.id) throw Error('Component must have id');
+            //FIXME: elemId = component.id, which is on config.elemId. Why not just use that?
+            config.elemId = elemId || config.elemId;
+            if (!config.elemId) throw Error('Component must have elemId');
             
             //The user specified a JS function name to use as JS controller - find it.
-            handlerFn = $V.App.getFn(config.jsCtlrName);
-            if (!handlerFn) throw Error('Component handler function is not defined or not found (' + config.jsCtlrName + ')');
-            if (this.compIdtoCtlrMap[config.id]) return; // avoid re-registering same component
+            compCtlrFn = $V.App.getFn(config.jsCtlrName);
+            if (!compCtlrFn) throw Error('Component handler function is not defined or not found (' + config.jsCtlrName + ')');
+            if (this.compIdtoCtlrMap[config.elemId]) return; // avoid re-registering same component
             
-            // Create a new instance of the JS controller, passing it config.
-            compCtlr = new handlerFn(config);
+            // Create a new instance of the JS controller, passing its config.
+            compCtlr = new compCtlrFn(config);
             if (!(compCtlr instanceof $V.Component)) throw Error('Component handler must extend Visualforce.Mobile.Component');
-            this.compIdtoCtlrMap[config.id] = compCtlr;//Save the component controller for later.
+            this.compIdtoCtlrMap[config.elemId] = compCtlr;//Save the component controller for later.
             
             // Register it under its parent page. This App just deals in rendering whole pages.
-            $parentPage = $('[id="'+ config.id + '"]').parents('[data-role="page"]:first');
+            $parentPage = $('[id="'+ config.elemId + '"]').parents('[data-role="page"]:first');
             if ($parentPage.length) page = this.pages[$parentPage.attr('id')] || this.registerPage($parentPage.attr('id'));
             if (page) {
                 page.comps.push(compCtlr);
@@ -276,8 +278,8 @@ $V = Visualforce.Mobile;
         prepare = function() {
             // change viewport designation
             $('span').removeClass('ui-mobile-viewport');
-            $('#'+this.config.compElemId).addClass("ui-mobile-viewport");
-            $.mobile.pageContainer = $('#'+this.config.compElemId);
+            $('#'+this.config.elemId).addClass("ui-mobile-viewport");
+            $.mobile.pageContainer = $('#'+this.config.elemId);
     
             // fetch user metadata
             $V.App.getFn(this.config.serverCtlrName).getUser(
@@ -316,8 +318,8 @@ $V = Visualforce.Mobile;
                 }
             } 
         },
-        getPage = function(id) {
-            return this.pages[id];
+        getPage = function(pageId) {
+            return this.pages[pageId];
         },
         getFn = function (name, context) {
             if (!name) return null;
@@ -437,9 +439,9 @@ $V = Visualforce.Mobile;
     $V.Component = $V.Class.extend({
         init: function(config) {
             this.config = config || {};
-            if (!config.id) throw Error('Config must have either id');
-            this.$me = $('[id="'+ config.id + '"]');
-            if (!config.id) throw Error('Element does not exist: ' + config.id);
+            if (!config.elemId) throw Error('Component\'s config must have an elemId property.');
+            this.$me = $('[id="'+ config.elemId + '"]');
+            if (!this.$me) throw Error('Element does not exist: ' + config.elemId);
         },
         prepare: function() {
             // to be implemented by extending class

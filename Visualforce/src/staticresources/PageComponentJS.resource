@@ -5,7 +5,7 @@
      */
     $V.Page = $V.Component.extend({
         init: function(id) {
-            this._super({id: id});
+            this._super({elemId: id});
             if (!this.comps) this.comps = [];
         },
         render: function() {

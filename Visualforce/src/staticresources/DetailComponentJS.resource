@@ -6,6 +6,7 @@
     $V.DetailComponent = $V.Component.extend(
     (function() {
         // REVIEWME: how come?
+        //Private methods.
         var getLayoutMarkup = function(layout) {
             var markup = ['<div class="layout">'];
             $.each(layout.detailSections, function() {
@@ -75,6 +76,7 @@
         }
         
         return {
+            //Constructor
             init: function(config) {
                 var that = this;
                 that._super(config);
@@ -83,10 +85,11 @@
                     if (context.config.stype == that.config.stype) that.render(context.data.Id);
                 });
             },
+            //Before render. Get data from server and create HTML templates.
             prepare: function() {
                 if (!this.prepared && !this.layouts) {
                     this._super();
-                    //Fetching layout metadata
+                    //Fetch layout metadata, create HTML template for each record type.
                     $V.App.getFn(this.config.serverCtlrName).invoke({config: {stype: this.config.stype}},
                         (function(comp) {
                             return function(result, event) {
@@ -111,6 +114,7 @@
                     );
                 }
             },
+            //Generate HTML and insert into DOM.
             render: function(sobjectId) {
                 this._super();
                 //FIX:If there is id in Url, pick that and load, else do nothing
@@ -121,6 +125,7 @@
                     else that.load(sobjectId, that.renderer);
                 }
             },
+            //Load data from server, then pass to renderer.
             load: function(sobjectId, handler) {
                 this.$me.trigger('pageload');
                 $.mobile.showPageLoadingMsg();
@@ -135,6 +140,7 @@
                     })(this, handler)
                 );
             },
+            //Render JSON records into template cached in prepare method.
             renderer: function(result, event) {
                 var markup = [], layout, data;
                 if (event.status && result && result.success && result.records) {
