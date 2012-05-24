@@ -118,7 +118,7 @@ $V = Visualforce.Mobile;
         var init = function(config) {
                 this.config = config;
                 this.pages = {};
-                this.components = {};
+                this.compIdtoCtlrMap = {};
                 this.debug = this.config.debug;
                 this.nextPage = {};
     
@@ -236,33 +236,41 @@ $V = Visualforce.Mobile;
                             
             return page;
         },
+        // 1) Store component element Id and its JS controller.
+        // 2) Attach component to a page.
+        // 3) Pull fields from component and save to config.
         registerComponent = function(id, config) {
-            var $parentPage, page, handlerFn, handlerFnExt, comp;
+            var $parentPage, page, handlerFn, handlerFnExt, compCtlr;
             
             //FIXME: id = component.id, which is on config.compElemId. Why not just use that?
             config.id = id || config.id;
             if (!config.id) throw Error('Component must have id');
             
+            //The user specified a JS function name to use as JS controller - find it.
             handlerFn = $V.App.getFn(config.jsCtlrName);
             if (!handlerFn) throw Error('Component handler function is not defined or not found (' + config.jsCtlrName + ')');
-            if (this.components[config.id]) return; // avoid re-registering same component
-            comp = new handlerFn(config);
-            if (!(comp instanceof $V.Component)) throw Error('Component handler must extend Visualforce.Mobile.Component');
-            this.components[config.id] = comp;
+            if (this.compIdtoCtlrMap[config.id]) return; // avoid re-registering same component
             
+            // Create a new instance of the JS controller, passing it config.
+            compCtlr = new handlerFn(config);
+            if (!(compCtlr instanceof $V.Component)) throw Error('Component handler must extend Visualforce.Mobile.Component');
+            this.compIdtoCtlrMap[config.id] = compCtlr;//Save the component controller for later.
+            
+            // Register it under its parent page. This App just deals in rendering whole pages.
             $parentPage = $('[id="'+ config.id + '"]').parents('[data-role="page"]:first');
             if ($parentPage.length) page = this.pages[$parentPage.attr('id')] || this.registerPage($parentPage.attr('id'));
             if (page) {
-                page.comps.push(comp);
+                page.comps.push(compCtlr);
             }
     
             // register fields to be processed later - gather metadata about each field
-            if (comp.fields) {
+            //TODO: What kind of field? Form field? SF record field?
+            if (compCtlr.fields) {
                 if (!this.config.fields) this.config.fields = [];
-                for (var i=0, len=comp.fields.length; i<len; i++) {
-                    if ($.inArray(comp.fields[i], this.config.fields) == -1) this.config.fields.push(comp.fields[i]);
+                for (var i=0, len=compCtlr.fields.length; i<len; i++) {
+                    if ($.inArray(compCtlr.fields[i], this.config.fields) == -1) this.config.fields.push(compCtlr.fields[i]);
                 }
-                delete comp.fields;
+                delete compCtlr.fields;
             }
         },
         prepare = function() {
@@ -301,9 +309,10 @@ $V = Visualforce.Mobile;
                 );
             }
             
-            if ($.isEmptyObject(this.pages) && !$.isEmptyObject(this.components)) {
-                for (compId in this.components) {
-                    this.components[compId].render();
+            //Render each component using its JS controller.
+            if ($.isEmptyObject(this.pages) && !$.isEmptyObject(this.compIdtoCtlrMap)) {
+                for (compId in this.compIdtoCtlrMap) {
+                    this.compIdtoCtlrMap[compId].render();
                 }
             } 
         },
