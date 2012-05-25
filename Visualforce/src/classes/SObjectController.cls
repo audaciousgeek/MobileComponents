@@ -38,22 +38,24 @@ public with sharing abstract class SObjectController extends BaseConfigControlle
         public String filterClause { get; set; }
         public String sortByField { get; set; }
         public Integer queryLimit { get; set; }
-        public List<String> fields { get; set; } // metadata lookup
+        public List<String> sFieldNames { get; set; } // metadata lookup
         
+        // Adds the name of a field to the config object.
+        // With a field name, the client can later request metadata.
         protected void addField(String field) {
             System.debug('adding field:' + field);
-            if (fields == null) fields = new List<String>();
+            if (sFieldNames == null) sFieldNames = new List<String>();
             if (field.indexOf('.') > -1) {
-                fields.add(field);
+                sFieldNames.add(field);
                 System.debug('adding field, as-is:' + field);
             } else {
                 if (stype != null) {
-                    fields.add(stype + '.' + field);
+                    sFieldNames.add(stype + '.' + field);
                     System.debug('adding field, stype:' + stype + '.' + field);
                 } else if (sid != null) {
                     Schema.SObjectType type = SchemaManager.getObjectForId(sid);
                     if (type != null) {
-                        fields.add(type.getDescribe().getName() + '.' + field);
+                        sFieldNames.add(type.getDescribe().getName() + '.' + field);
                         System.debug('adding field, sid:' + type.getDescribe().getName() + '.' + field);
                     }
                 }

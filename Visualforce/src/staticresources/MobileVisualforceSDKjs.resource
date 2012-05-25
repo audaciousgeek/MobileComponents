@@ -265,8 +265,12 @@ $V = Visualforce.Mobile;
                 page.comps.push(compCtlr);
             }
     
-            // register fields to be processed later - gather metadata about each field
-            //TODO: What kind of field? Form field? SF record field?
+            console.log('compCtlr: ', compCtlr);
+            // Save Salesforce fields on the component's config object for later reference.
+            // 'sFieldNames' vs 'allfields'? Seems like allfields is for layout.
+            // 'sFieldNames' is on SObjectConfig.
+            //TODO: Check if we can remove this section. Not sure why this fields info
+            //   would ever be stored on the compCtlr...
             if (compCtlr.fields) {
                 if (!this.config.fields) this.config.fields = [];
                 for (var i=0, len=compCtlr.fields.length; i<len; i++) {
@@ -295,14 +299,14 @@ $V = Visualforce.Mobile;
             );
     
             // fetch field metadata
-            if (this.config.fields && this.config.fields.length > 0) {
+            if (this.config.sFieldNames && this.config.sFieldNames.length > 0) {
             $V.App.getFn(this.config.serverCtlrName).getFieldMetadata(
-                    this.config.fields,
+                    this.config.sFieldNames,
                     (function(that) {
                         return function(result, event) {
                             if (event.status && result && !result.errors) {
-                                that.config.fields = result;
-                                that.log.debug('Field metadata', that.config.fields);
+                                that.config.sFieldNames = result;
+                                that.log.debug('Field metadata', that.config.sFieldNames);
                             } else {
                                 $V.App.handleRemoteErrs(result, event, null, true);
                             }

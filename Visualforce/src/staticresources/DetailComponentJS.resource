@@ -98,7 +98,7 @@
                                     comp.layouts = result.layouts;
                                     comp.allFields = [];
                                     $.each(comp.layouts, function() {
-                                        comp.allFields = comp.allFields.concat(this.fields);
+                                        comp.allFields = comp.allFields.concat(this.sFieldNames);
                                         $.template(comp.config.stype+'.'+this.recordTypeId, getLayoutMarkup(this));
                                     });
                                     if (comp.layouts.length > 1) comp.allFields.push('RecordTypeId');

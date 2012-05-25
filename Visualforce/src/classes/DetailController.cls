@@ -32,7 +32,7 @@ layouts: [{
     recordTypeName:
     defaultRecordTypeMapping:
     name: <not available>
-    fields:['field1', 'field2']
+    sFieldNames:['field1', 'field2']
     detailSections: [{
         heading:
         columns:
@@ -86,11 +86,11 @@ public with sharing class DetailController extends SObjectController {
     	String recordTypeName;
     	Boolean defaultRecordTypeMapping;
     	List<LayoutSection> detailSections;
-    	Set<String> fields;
+    	Set<String> sFieldNames;
     	
     	public Layout() {
     		this.detailSections = new List<LayoutSection>();
-    		this.fields = new Set<String>();
+    		this.sFieldNames = new Set<String>();
     	}
     }
 
@@ -121,12 +121,12 @@ public with sharing class DetailController extends SObjectController {
         }
         private void addComponent(SObjectType objectType, Layout layout, SFDCPartnerSoap.DescribeLayoutComponent comp) {
         	if (comp.type_x.equalsIgnoreCase('Field')) {
-        		layout.fields.add(comp.value);
+        		layout.sFieldNames.add(comp.value);
         		Schema.DescribeFieldResult fieldDesc = SchemaManager.getFieldDescribe(objectType, comp.value);
         		if (fieldDesc.getType() == Schema.DisplayType.Reference) {
         			String nameField = SchemaManager.getNameFieldForReferenceField(fieldDesc);
         			this.valueTemplate += '{{if '+ fieldDesc.getRelationshipName() +'}}${' + nameField + '}{{/if}}';
-        			layout.fields.add(nameField);
+        			layout.sFieldNames.add(nameField);
         		} else {
         			this.valueTemplate += '{{if typeof('+ comp.value +') != "undefined"}}' +
         			                      '{{html $item.value("' + fieldDesc.getType() + '",' + comp.value + ')}}' + 
@@ -160,12 +160,12 @@ public with sharing class DetailController extends SObjectController {
     }
     
     @RemoteAction
-    public static SObjectResponse querySObject(DetailConfig config, Id sobjectId, List<String> fields) {
+    public static SObjectResponse querySObject(DetailConfig config, Id sobjectId, List<String> sFieldNames) {
     	DetailController controller = new DetailController(config);
     	
     	Set<String> fieldsToQuery = new Set<String>();
-    	fields.add('id');
-    	for (String field : fields) fieldsToQuery.add(field.toLowerCase());
+    	sFieldNames.add('id');
+    	for (String fieldName : sFieldNames) fieldsToQuery.add(fieldName.toLowerCase());
     	
         return new SObjectResponse(controller.getDescribe().getSObjectType(), 
             controller.querySObject(fieldsToQuery, new Id[] {sobjectId}), DateTime.now());

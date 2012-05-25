@@ -3,7 +3,8 @@
     <apex:attribute name="debug" type="Boolean" assignTo="{!config.debug}" default="false" description=""/>
     
     <script>
-        //TODO: Consider just calling 'prepare' from 'init', and move 'init' to onReady.
+        // Init must be called at top of page. As components are pulled in,
+        //   they will register with App. After page is loaded, App can finally start.
         $V.App.init({!configJson});
 
         $(document).ready(function(){
