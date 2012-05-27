@@ -1,0 +1,33 @@
+<apex:component controller="ThumbnailListController">
+    <!-- Content -->
+    <apex:attribute name="sObjectType" type="String" required="true" assignTo="{!config.sObjectType}" description=""/>
+    <apex:attribute name="filter" type="String" required="false" assignTo="{!config.filter}" description="owner|recent|follower"/>
+    <apex:attribute name="filterClause" type="String" required="false" assignTo="{!config.filterClause}"
+                    description="SOQL WHERE clause to use to filter list records."/>
+    <!-- UI -->
+    <apex:attribute name="imageUrlField" type="String" required="true" assignTo="{!config.imageUrlField}" description=""/>
+    <apex:attribute name="labelField" type="String" required="true" assignTo="{!config.labelField}" description=""/>
+    <apex:attribute name="subLabelField" type="String" required="true" assignTo="{!config.subLabelField}" description=""/>
+    <apex:attribute name="listItemStyleClass" type="String" assignTo="{!config.listItemStyleClass}" description=""/>
+    <apex:attribute name="sortByField" type="String" required="true" assignTo="{!config.sortByField}" description=""/>
+    <apex:attribute name="listDividerStyleClass" type="String" assignTo="{!config.listDividerStyleClass}" description=""/>
+    <apex:attribute name="listDividerStyleClass" type="String" assignTo="{!config.listDividerStyleClass}" description=""/>
+    <apex:attribute name="listFilter" type="Boolean" default="false" description=""/>
+    <!-- Behaviour -->
+    <apex:attribute name="nextPage" type="String" assignTo="{!config.nextPage}" description=""/>
+    <apex:attribute name="jsCtlrName" type="String" assignTo="{!config.jsCtlrName}" default="$V.ThumbnailListController"
+                    description="Custom Javascript handler to manage client-side lifecycle and behavior."/>
+    <apex:attribute name="debug" type="Boolean" assignTo="{!config.debug}" default="false" description=""/>
+    
+    <!-- VF/HTML -->
+    <apex:includeScript value="{!URLFOR($Resource[ThumbnailListJS])}"/>
+    
+    <apex:outputPanel layout="inline" id="list">
+       <ul data-role="listview" class="ui-listview" data-filter="{!listFilter}"></ul>
+    </apex:outputPanel>
+    
+    
+
+    <script>$V.App.registerComponent('{!$Component.list}', {!configAsJson});</script>
+    
+</apex:component>

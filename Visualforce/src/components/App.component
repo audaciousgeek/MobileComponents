@@ -25,6 +25,7 @@
     <apex:includeScript value="{!URLFOR($Resource[MobileSplitViewJs])}"/> <!-- This must be in the App level. -->
     <apex:includeScript value="{!URLFOR($Resource[JqueryMobileJs])}"/>
     <apex:includeScript value="{!URLFOR($Resource[MobileSDKJs])}"/>
+    <apex:includeScript value="{!URLFOR($Resource[ICanHazJs])}"/>
     
     <apex:dynamicComponent componentValue="{!additionalScripts}" rendered="{!debug}"/>
 
@@ -35,6 +36,39 @@
     <div id="{!elemId}" style="position:absolute; top:0; bottom:0; left:0; right:0;">
         <apex:componentBody />
     </div>
+    
+    
+    
+    <!-- Templates -->
+    <script id="rowItemTempl" type="text/html">
+    
+      {{#records}}
+      <li data-corners="false"
+          data-shadow="false"
+          data-iconshadow="true"
+          data-wrapperels="div"
+          data-icon="arrow-r" 
+          data-iconpos="right"
+          data-theme="c"
+          class="ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-li-has-thumb ui-btn-up-c">
+          
+        <div class="ui-btn-inner ui-li">
+          <div class="ui-btn-text">
+            <a href="/ThumbnailList#userDetail?Id={{Id}}" class="ui-link-inherit">
+              <img src="{{FullPhotoUrl}}" class="ui-li-thumb">
+              <h3 class="ui-li-heading">{{Name}}</h3>
+              <p class="ui-li-desc">{{Phone}}</p>
+            </a>
+          </div>
+          <span class="ui-icon ui-icon-arrow-r ui-icon-shadow">&nbsp;</span>
+        </div>
+      </li>
+      {{/records}}
+      
+    </script>
+    
+    
+    
     
     <style>
         body {

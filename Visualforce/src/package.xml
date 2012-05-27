@@ -10,6 +10,7 @@
         <members>FooterController</members>
         <members>HeaderController</members>
         <members>ListController</members>
+        <members>ThumbnailListController</members>
         <members>NavController</members>
         <members>PageController</members>
         <members>RemoteRequest</members>
@@ -30,12 +31,14 @@
         <members>Footer</members>
         <members>Header</members>
         <members>List</members>
+        <members>ThumbnailList</members>
         <members>Nav</members>
         <members>Page</members>
         <name>ApexComponent</name>
     </types>
     <types>
         <members>MobilePage</members>
+        <members>ThumbnailList</members>
         <members>MobilePageWithComponents</members>
         <members>SplitViewTemplate</members>
         <name>ApexPage</name>
@@ -43,6 +46,7 @@
     <types>
         <members>DetailComponentJS</members>
         <members>ListComponentJS</members>
+        <members>ThumbnailListJS</members>
         <members>MobileVisualforceSDKImages</members>
         <members>MobileVisualforceSDKcss</members>
         <members>MobileVisualforceSDKjs</members>
@@ -55,6 +59,7 @@
         <members>jqmSVcss</members>
         <members>jqmSVjs</members>
         <members>jqmSVjsMin</members>
+        <members>ICanHaz</members>
         <name>StaticResource</name>
     </types>
     <version>23.0</version>

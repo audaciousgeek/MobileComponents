@@ -81,9 +81,9 @@
                 var that = this;
                 that._super(config);
                 
-                $(document).on('listitemselect', function(e, context) {
-                    if (context.config.stype == that.config.stype) that.render(context.data.Id);
-                });
+                //$(document).on('listitemselect', function(e, context) {
+                    //if (context.config.stype == that.config.stype) that.render(context.data.Id);
+                //});
             },
             //Before render. Get data from server and create HTML templates.
             prepare: function() {
