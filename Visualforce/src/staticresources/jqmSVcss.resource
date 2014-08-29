@@ -56,18 +56,7 @@ div[data-id="main"] {
     -webkit-box-pack: justify;
   }
 
-  .ui-mobile .splitview .ui-page .ui-header {
-    position: static;
-    z-index: 1000;
-  }
-
-  .ui-mobile .splitview .ui-page .ui-footer {
-    position: static;
-    z-index:1000;
-  }
-
   .ui-mobile .splitview .ui-page .ui-content {
-    position: static;
     overflow:hidden; overflow-y: scroll;
     -webkit-overflow-scrolling:touch;
     -webkit-box-flex: 1;

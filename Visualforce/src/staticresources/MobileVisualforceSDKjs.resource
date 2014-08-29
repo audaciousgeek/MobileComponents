@@ -115,10 +115,11 @@ $V = Visualforce.Mobile;
      */
     $V.App = (function() {
         // privates
+        //TODO: Consider renaming config to compState
         var init = function(config) {
                 this.config = config;
                 this.pages = {};
-                this.components = {};
+                this.compIdtoCtlrMap = {};
                 this.debug = this.config.debug;
                 this.nextPage = {};
     
@@ -157,7 +158,7 @@ $V = Visualforce.Mobile;
                             page = that.getPage(parseHash(toPage));
                             // render page
                             if (page && page.rerender) {
-                                that.log.debug('Rerendering page: ' + page.config.id);
+                                that.log.debug('Rerendering page: ' + page.config.elemId);
                                 page.rerender();
                             }
                         }
@@ -173,8 +174,8 @@ $V = Visualforce.Mobile;
                             page = that.getPage(evt.target.id);
                             if (page && !(page instanceof $V.Page)) {
                                 page = new $V.Page(page);
-                                that.pages[page.config.id] = page;
-                                that.log.debug('Init\'ing page: ' + page.config.id);
+                                that.pages[page.config.elemId] = page;
+                                that.log.debug('Init\'ing page: ' + page.config.elemId);
                             }
                         }
                     }
@@ -188,7 +189,7 @@ $V = Visualforce.Mobile;
                         if (evt.target.id) {
                             page = that.getPage(evt.target.id);
                             if (page && page.render) {
-                                that.log.debug('Rendering page: ' + page.config.id);
+                                that.log.debug('Rendering page: ' + page.config.elemId);
                                 page.render();
                             }
                         }
@@ -221,57 +222,71 @@ $V = Visualforce.Mobile;
                 }
             })(this);
         },
-        registerPage = function(id, page) {
-            if (!id) {
+        registerPage = function(elemId, page) {
+            if (!elemId) {
                 //JQM adds a page automatically if no page found.
-                this.log.info('Ignore page registration. No id specified'); 
+                this.log.info('Ignore page registration. No elemId parameter specified.'); 
                 return;
             }
             
-            page = page || this.pages[id] || new $V.Page(id);
-            if (!(page instanceof $V.Page)) throw Error('Page must be instance of $V.Page');
-            if (id != page.config.id) throw Error('Id and Page config id must match.'); 
+            page = page || this.pages[elemId] || new $V.Page(elemId);
+            if (!(page instanceof $V.Page)) throw Error('Page must be an instance of $V.Page.');
+            if (elemId != page.config.elemId) throw Error('Id and Page config elemId must match.'); 
             
-            this.pages[id] = page;
+            this.pages[elemId] = page;
                             
             return page;
         },
-        registerComponent = function(id, config) {
-            var $parentPage, page, handlerFn, handlerFnExt, comp;
+        // 1) Store component element Id and its JS controller.
+        // 2) Attach component to a page.
+        // 3) Pull fields from component and save to config.
+        //TODO: Consider renaming config to compState.
+        registerComponent = function(elemId, config) {
+            var $parentPage, page, compCtlrFn, handlerFnExt, compCtlr;
             
-            config.id = id || config.id;
-            if (!config.id) throw Error('Component must have id');
+            //FIXME: elemId = component.id, which is on config.elemId. Why not just use that?
+            config.elemId = elemId || config.elemId;
+            if (!config.elemId) throw Error('Component must have elemId');
             
-            handlerFn = $V.App.getFn(config.compHandler);
-            if (!handlerFn) throw Error('Component handler function is not defined or not found (' + config.compHandler + ')');
-            if (this.components[config.id]) return; // avoid re-registering same component
-            comp = new handlerFn(config);
-            if (!(comp instanceof $V.Component)) throw Error('Component handler must extend Visualforce.Mobile.Component');
-            this.components[config.id] = comp;
+            //The user specified a JS function name to use as JS controller - find it.
+            compCtlrFn = $V.App.getFn(config.jsCtlrName);
+            if (!compCtlrFn) throw Error('Component handler function is not defined or not found (' + config.jsCtlrName + ')');
+            if (this.compIdtoCtlrMap[config.elemId]) return; // avoid re-registering same component
             
-            $parentPage = $('[id="'+ config.id + '"]').parents('[data-role="page"]:first');
+            // Create a new instance of the JS controller, passing its config.
+            compCtlr = new compCtlrFn(config);
+            if (!(compCtlr instanceof $V.Component)) throw Error('Component handler must extend Visualforce.Mobile.Component');
+            this.compIdtoCtlrMap[config.elemId] = compCtlr;//Save the component controller for later.
+            
+            // Register it under its parent page. This App just deals in rendering whole pages.
+            $parentPage = $('[id="'+ config.elemId + '"]').parents('[data-role="page"]:first');
             if ($parentPage.length) page = this.pages[$parentPage.attr('id')] || this.registerPage($parentPage.attr('id'));
             if (page) {
-                page.comps.push(comp);
+                page.comps.push(compCtlr);
             }
     
-            // register fields to be processed later - gather metadata about each field
-            if (comp.fields) {
+            console.log('compCtlr: ', compCtlr);
+            // Save Salesforce fields on the component's config object for later reference.
+            // 'sFieldNames' vs 'allfields'? Seems like allfields is for layout.
+            // 'sFieldNames' is on SObjectConfig.
+            //TODO: Check if we can remove this section. Not sure why this fields info
+            //   would ever be stored on the compCtlr...
+            if (compCtlr.fields) {
                 if (!this.config.fields) this.config.fields = [];
-                for (var i=0, len=comp.fields.length; i<len; i++) {
-                    if ($.inArray(comp.fields[i], this.config.fields) == -1) this.config.fields.push(comp.fields[i]);
+                for (var i=0, len=compCtlr.fields.length; i<len; i++) {
+                    if ($.inArray(compCtlr.fields[i], this.config.fields) == -1) this.config.fields.push(compCtlr.fields[i]);
                 }
-                delete comp.fields;
+                delete compCtlr.fields;
             }
         },
         prepare = function() {
             // change viewport designation
             $('span').removeClass('ui-mobile-viewport');
-            $('#'+this.config.eid).addClass("ui-mobile-viewport");
-            $.mobile.pageContainer = $('#'+this.config.eid);
+            $('#'+this.config.elemId).addClass("ui-mobile-viewport");
+            $.mobile.pageContainer = $('#'+this.config.elemId);
     
             // fetch user metadata
-            $V.App.getFn(this.config.cntrl).getUser(
+            $V.App.getFn(this.config.serverCtlrName).getUser(
                 (function(that) {
                     return function(result, event) {
                         if (event.status && result && !result.errors) {
@@ -284,14 +299,14 @@ $V = Visualforce.Mobile;
             );
     
             // fetch field metadata
-            if (this.config.fields && this.config.fields.length > 0) {
-            $V.App.getFn(this.config.cntrl).getFieldMetadata(
-                    this.config.fields,
+            if (this.config.sFieldNames && this.config.sFieldNames.length > 0) {
+            $V.App.getFn(this.config.serverCtlrName).getFieldMetadata(
+                    this.config.sFieldNames,
                     (function(that) {
                         return function(result, event) {
                             if (event.status && result && !result.errors) {
-                                that.config.fields = result;
-                                that.log.debug('Field metadata', that.config.fields);
+                                that.config.sFieldNames = result;
+                                that.log.debug('Field metadata', that.config.sFieldNames);
                             } else {
                                 $V.App.handleRemoteErrs(result, event, null, true);
                             }
@@ -300,14 +315,15 @@ $V = Visualforce.Mobile;
                 );
             }
             
-            if ($.isEmptyObject(this.pages) && !$.isEmptyObject(this.components)) {
-                for (compId in this.components) {
-                    this.components[compId].render();
+            //Render each component using its JS controller.
+            if ($.isEmptyObject(this.pages) && !$.isEmptyObject(this.compIdtoCtlrMap)) {
+                for (compId in this.compIdtoCtlrMap) {
+                    this.compIdtoCtlrMap[compId].render();
                 }
             } 
         },
-        getPage = function(id) {
-            return this.pages[id];
+        getPage = function(pageId) {
+            return this.pages[pageId];
         },
         getFn = function (name, context) {
             if (!name) return null;
@@ -427,9 +443,9 @@ $V = Visualforce.Mobile;
     $V.Component = $V.Class.extend({
         init: function(config) {
             this.config = config || {};
-            if (!config.id) throw Error('Config must have either id');
-            this.$me = $('[id="'+ config.id + '"]');
-            if (!config.id) throw Error('Element does not exist: ' + config.id);
+            if (!config.elemId) throw Error('Component\'s config must have an elemId property.');
+            this.$me = $('[id="'+ config.elemId + '"]');
+            if (!this.$me) throw Error('Element does not exist: ' + config.elemId);
         },
         prepare: function() {
             // to be implemented by extending class
@@ -450,81 +466,4 @@ $V = Visualforce.Mobile;
         }
     });
     
-    /**
-     * Class representing pages and their lifecycle.
-     */
-    $V.Page = $V.Component.extend({
-        init: function(id) {
-            this._super({id: id});
-            if (!this.comps) this.comps = [];
-        },
-        render: function() {
-            this._super();
-            if (this.comps) {
-                $.each(this.comps, function() {
-                    if (this.render) this.render();
-                });
-            }
-        },
-        rerender: function() {
-            // when page is re-rendered
-            if (this.comps) {
-                $.each(this.comps, function() {
-                    if (this.rerender) this.rerender();
-                });
-            }
-        },
-        postrender: function() {
-            if (this.comps) {
-                $.each(this.comps, function() {
-                    if (this.postrender) this.postrender();
-                });
-            }
-        }
-    });
-    
-    /**
-     * Class representing nav components and their lifecycle.  Extend to override standard nav component functionality.
-     */
-    $V.NavComponent = $V.Component.extend({
-        init: function(config) {
-            this._super(config);
-            if (!this.config.pages) throw Error('Expected navigation config');
-            try {
-                this.config.nav = jQuery.parseJSON(this.config.pages.replace(/'/g, '"'));
-            }catch(err) {
-                $V.App.log.error('Unable to render navbar', err);
-                return;
-            }
-            if (!this.config.nav && !$.isArray(this.config.nav)) throw Error('Expected navigation config to be an array');
-        },
-        render: function() {
-            this.renderer();
-        },
-        renderer: function() {
-            if (!this.config.nav) return;
-            var markup = [], finalMarkup, $ul;
-            for (var i=0, len=this.config.nav.length; i<len; i++) {
-                if (!this.config.nav[i].page) continue;
-                markup.push('<li><a href="', this.config.nav[i].page, '"');
-                if (this.config.nav[i].iconCls) markup.push(' data-icon="', this.config.nav[i].iconCls, '"');
-                markup.push('>');
-                if (this.config.nav[i].name) markup.push(this.config.nav[i].name);
-                markup.push('</a></li>');
-            }
-    
-            finalMarkup = markup.join('');
-            $V.App.log.debug('nav markup', finalMarkup);
-            $ul = this.$me.find('ul');
-            $ul.html(finalMarkup);
-            $ul.parent().navbar(); // FIXME: rendering buttons on top instead of side-by-side
-        },
-        postrender: function() {
-            this.$me.find('a').each(function(){
-                var el = $(this);
-                if ($V.App.nextPage && el.attr('href').indexOf($V.App.nextPage) > 0)
-                    el.addClass('ui-btn-active');
-            });
-        }
-    });
 })(jQuery);

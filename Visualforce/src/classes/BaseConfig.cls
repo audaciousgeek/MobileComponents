@@ -30,8 +30,8 @@
  */
 public virtual class BaseConfig {
 
-    public String eid { get; set; }
-    public String compHandler { get; set; }
+    public String elemId { get; set; }
+    public String jsCtlrName { get; set; }
 
     protected List<String> toArray(String str) {
         return str.contains(',') ? str.split(',') : new List<String>{str};

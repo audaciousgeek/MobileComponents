@@ -34,6 +34,7 @@ public class AppController extends BaseConfigController {
     private final static String JQUERY_TEMPLATE_JS = 'http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js';
     private final static String JQUERY_TEMPLATE_JS_DEBUG = 'http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.js';
     private final static String JQUERY_MOBILE_JS = 'jqm11js';
+    private final static String I_CAN_HAZ_JS = 'ICanHaz';
     private final static String MOBILE_SPLIT_VIEW_JS = 'jqmSVjs';
     private final static String MOBILE_SDK_JS = 'MobileVisualforceSDKjs';
 
@@ -42,7 +43,7 @@ public class AppController extends BaseConfigController {
      */
     public virtual class AppConfig extends BaseConfig {
         public Boolean debug { get; set; }
-        String cntrl = getFullyQualifiedClassName(AppController.class);
+        String serverCtlrName = getFullyQualifiedClassName(AppController.class);
     }
 
     public AppController() {
@@ -64,6 +65,10 @@ public class AppController extends BaseConfigController {
     public String getJqueryMobileJs() {
         return getConfig().debug ? JQUERY_MOBILE_JS : (JQUERY_MOBILE_JS + 'Min');
     }
+    
+    public String getICanHazJs() {
+    	return getConfig().debug ? I_CAN_HAZ_JS : (I_CAN_HAZ_JS + 'Min');
+    }
 
     public String getMobileSplitViewJs() {
         return getConfig().debug ? MOBILE_SPLIT_VIEW_JS : (MOBILE_SPLIT_VIEW_JS + 'Min');
@@ -75,15 +80,7 @@ public class AppController extends BaseConfigController {
     
     public Component.Apex.OutputPanel getAdditionalScripts() {
     	Component.Apex.OutputPanel panel = new Component.Apex.OutputPanel(layout='none');
-	    	
-    	Component.Apex.IncludeScript script = new Component.Apex.IncludeScript();
-    	script.expressions.value = '{!URLFOR($Resource[\'ListComponentJS\'])}';
-    	panel.childComponents.add(script);
-    	
-    	script = new Component.Apex.IncludeScript();
-        script.expressions.value = '{!URLFOR($Resource[\'DetailComponentJS\'])}';
-        panel.childComponents.add(script);
-        
+	
         return panel;
     }
 

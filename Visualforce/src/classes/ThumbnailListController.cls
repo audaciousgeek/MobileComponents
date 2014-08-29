@@ -27,71 +27,122 @@
 /**
  * Controller for List component.
  */
-public class ListController extends SObjectController {
+//public class ListController extends SObjectController {
+public class ThumbnailListController {
     
-    private final static String LIST_COMPONENT_JS = 'ListComponentJS';
+    private final static String THUMBNAIL_LIST_JS = 'ThumbnailListJS';
+    public ThumbnailListConfig config {get; set;}
     
-    // config for list component
-    public virtual class ListConfig extends SObjectConfig {
+    // Parameter object to pass between JS controller and server controller.
+    public virtual class ThumbnailListConfig {
 
         public Boolean debug { get; set; }
-        public String labelField { get;
-            set {
-                labelField = value;
-                addField(labelField);
-            }}
-        public String subLabelField { get;
-            set {
-                subLabelField = value;
-                addField(subLabelField);
-            }}
+        // The elemId is generated in VF and sent to client. The controller gets
+        //   it when a remoting call is made.
+        public String elemId {get; set;}
+        public String sObjectType {get; set;}
+        public String imageUrlField {get; set;}
+        public String labelField {get; set;}
+        public String subLabelField {get; set;}
+        public String sortByField {get; set;}
         public String filter { get; set; }
+        public String filterClause {get; set;}
         public String listItemStyleClass { get; set; }
         public String listDividerStyleClass { get; set; }
         public String nextPage { get; set; }
-
-        public String serverCtlrName = getFullyQualifiedClassName(ListController.class);
-    }
-
-    // incoming list-based remote request
-    public class ListRequest extends RemoteRequest {
-        protected ListConfig config;
-        public ListRequest(ListConfig config, Map<String, String> values) {
-            super(values);
-            System.debug('config: ' + config);
-            System.debug('values: ' + values);
-            this.config = config;
-        }
-
-        public ListConfig getConfig() {
-            return config;
-        }
+        //public String serverCtlrName = SObject.getFullyQualifiedClassName(ListController.class);
+        public String serverCtlrName = 'ThumbnailListController';
+        public String jsCtlrName {get; set;}
     }
 
     // constructors
-    public ListController() {
-        super(new ListConfig());
+    public ThumbnailListController() {
+        this.config = new ThumbnailListConfig();
+    }
+    public ThumbnailListController(ThumbnailListConfig config) {
+        this.config = config;
     }
 
-    public ListController(ListConfig config) {
-        super(config);
-    }
-
-    public ListConfig getConfig() {
-        return (ListConfig)config;
+    public String getThumbnailListJS() {
+        return config.debug ? THUMBNAIL_LIST_JS : (THUMBNAIL_LIST_JS + 'Min');
     }
     
-    public String getListComponentJS() {
-        return getConfig().debug ? LIST_COMPONENT_JS : (LIST_COMPONENT_JS + 'Min');
+    public virtual String getConfigAsJson() {
+        String configStr = JSON.serialize(this.config);
+        System.debug(configStr);
+        return configStr;
     }
     
+    /*
     @RemoteAction
     public static SObjectResponse invoke(ListRequest listRequest) {
         ListController controller = new ListController(listRequest.getConfig());
 
         return new SObjectResponse(controller.getDescribe().getSObjectType(), controller.getList(), DateTime.now());
     }
+    */
+    
+    public class TestResponse {
+        public String testParam {get; set;}
+        public String testParam2 {get; set;}
+    }
+    
+    @RemoteAction
+    public static String getRecordsForConfigTest(TestResponse test) {
+        System.debug(' testing... ' + test);
+        return ' testing success!';
+    }
+    
+    @RemoteAction
+    public static List<Sobject> getRecordsForConfig(ThumbnailListConfig config) {
+        System.debug('--- config: ' + config);
+        Set<String> fieldsToQuerySet = new Set<String>();
+        fieldsToQuerySet.add(config.imageUrlField);
+        fieldsToQuerySet.add(config.labelField);
+        fieldsToQuerySet.add(config.subLabelField);
+        fieldsToQuerySet.add(config.sortByField);
+        
+        List<Sobject> recordList = ThumbnailListController.getRecords(
+                config.sObjectType,
+                fieldsToQuerySet,
+                UserInfo.getUserId()
+                );
+        
+        return recordList;
+    }
+    
+    public static List<Sobject> getRecords(
+            String sObjectType,
+            Set<String> fieldsToQuerySet,
+            Id userId) {
+        
+        List<Sobject> recordList = new List<Sobject>();
+        
+        String queryString = '';
+        
+        // Build the Select clause.
+        queryString += 'SELECT ';
+        for (String field : fieldsToQuerySet)
+            queryString += (field + ',');
+        queryString = queryString.subString(0, queryString.length()-1);
+            
+        // Build the From clause.
+        queryString += ' FROM ' + sObjectType;
+        
+        // Build the Where clause.
+        queryString += ' WHERE ';
+        queryString += ' LastModifiedById = \'' + userId + '\'';
+        
+        System.debug('queryString: ' + queryString);
+        
+        recordList = Database.query(queryString);
+        
+        return recordList;
+    }
+    
 
+
+/*
     public List<SObject> getList() {
         DescribeSObjectResult descInfo = this.getDescribe();
         Map<String, SObjectField> fieldMap = descInfo.fields.getMap();
@@ -141,4 +192,5 @@ public class ListController extends SObjectController {
 
         return Database.query(soql);
     }
+    */
 }

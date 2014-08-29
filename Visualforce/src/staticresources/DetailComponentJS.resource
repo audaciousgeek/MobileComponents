@@ -6,6 +6,7 @@
     $V.DetailComponent = $V.Component.extend(
     (function() {
         // REVIEWME: how come?
+        //Private methods.
         var getLayoutMarkup = function(layout) {
             var markup = ['<div class="layout">'];
             $.each(layout.detailSections, function() {
@@ -75,19 +76,21 @@
         }
         
         return {
+            //Constructor
             init: function(config) {
                 var that = this;
                 that._super(config);
                 
-                $(document).on('listitemselect', function(e, context) {
-                    if (context.config.stype == that.config.stype) that.render(context.data.Id);
-                });
+                //$(document).on('listitemselect', function(e, context) {
+                    //if (context.config.stype == that.config.stype) that.render(context.data.Id);
+                //});
             },
+            //Before render. Get data from server and create HTML templates.
             prepare: function() {
                 if (!this.prepared && !this.layouts) {
                     this._super();
-                    //Fetching layout metadata
-                    $V.App.getFn(this.config.cntrl).invoke({config: {stype: this.config.stype}},
+                    //Fetch layout metadata, create HTML template for each record type.
+                    $V.App.getFn(this.config.serverCtlrName).invoke({config: {stype: this.config.stype}},
                         (function(comp) {
                             return function(result, event) {
                                 // TODO: handle errors
@@ -95,7 +98,7 @@
                                     comp.layouts = result.layouts;
                                     comp.allFields = [];
                                     $.each(comp.layouts, function() {
-                                        comp.allFields = comp.allFields.concat(this.fields);
+                                        comp.allFields = comp.allFields.concat(this.sFieldNames);
                                         $.template(comp.config.stype+'.'+this.recordTypeId, getLayoutMarkup(this));
                                     });
                                     if (comp.layouts.length > 1) comp.allFields.push('RecordTypeId');
@@ -111,6 +114,7 @@
                     );
                 }
             },
+            //Generate HTML and insert into DOM.
             render: function(sobjectId) {
                 this._super();
                 //FIX:If there is id in Url, pick that and load, else do nothing
@@ -121,11 +125,12 @@
                     else that.load(sobjectId, that.renderer);
                 }
             },
+            //Load data from server, then pass to renderer.
             load: function(sobjectId, handler) {
                 this.$me.trigger('pageload');
                 $.mobile.showPageLoadingMsg();
                 this.$me.empty();
-                $V.App.getFn(this.config.cntrl).querySObject(
+                $V.App.getFn(this.config.serverCtlrName).querySObject(
                     {stype: this.config.stype}, sobjectId, this.allFields, 
                     (function(that, fn) {
                         return function(result, event) {
@@ -135,6 +140,7 @@
                     })(this, handler)
                 );
             },
+            //Render JSON records into template cached in prepare method.
             renderer: function(result, event) {
                 var markup = [], layout, data;
                 if (event.status && result && result.success && result.records) {

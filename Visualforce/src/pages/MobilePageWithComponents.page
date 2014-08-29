@@ -1,7 +1,9 @@
 <apex:page showHeader="false" standardStylesheets="false" cache="false" doctype="html-5.0">
     <c:App debug="true">
         <!--  H O M E  (single) -->
-        <c:Page name="homePage">
+        <c:Page name="homePage"
+                theme="touch"
+                debug="true">
             <c:Header >
                 <h1>Welcome!</h1>
             </c:Header>
@@ -13,7 +15,10 @@
         </c:Page>
 
         <!--  L I S T  (single) -->
-        <c:Page name="listPage" back="true">
+        <c:Page name="listPage"
+                back="true"
+                theme="touch"
+                debug="true">
             <c:Header >
                 <h1>My Header</h1>
             </c:Header>
@@ -24,28 +29,41 @@
                         sortByField="FirstName"
                         filter="owner"
                         listFilter="true"
-                        goToPage="#detailPage" />
+                        nextPage="#detailPage"
+                        debug="true"/>
             </c:Content>
             <c:Footer >
                 <!--  ,'iconCls':'star' -->
-                <c:Nav eid="listPageNav"
-                    pages="[{'page':'#homePage','name':'Home'},{'page':'#listPage','name':'List'},{'page':'/apex/RemoteMobilePage?id=sdfsfs','name':'Remote'}]"/>
+                <c:Nav elemId="listPageNav"
+                    pages="[{'page':'#homePage','name':'Home'},{'page':'#listPage','name':'List'},{'page':'/apex/RemoteMobilePage?id=sdfsfs','name':'Remote'}]"
+                    debug="true"/>
             </c:Footer>
         </c:Page>
 
         <!--  D E T A I L  (single) -->
-        <c:Page name="detailPage" back="true">
+        <c:Page name="detailPage"
+                back="true"
+                theme="touch"
+                debug="true">
             <c:Header >
                 <h1>My Header</h1>
             </c:Header>
             <c:Content >
-                <c:Detail sobject="Contact"/>
+                <c:Detail sobject="Contact"
+                          debug="true"/>
             </c:Content>
             <c:Footer >
                 <!--  ,'iconCls':'star' -->
-                <c:Nav eid="detailPageNav"
-                    pages="[{'page':'#homePage','name':'Home'},{'page':'#listPage','name':'List'}]"/>
+                <c:Nav elemId="detailPageNav"
+                    pages="[{'page':'#homePage','name':'Home'},{'page':'#listPage','name':'List'}]"
+                    debug="true"/>
             </c:Footer>
         </c:Page>
     </c:App>
+    
+    <style>
+        .ui-body-touch, .ui-overlay-touch {
+	        font-family: Helvetica, Arial, sans-serif
+	    }
+    </style>
 </apex:page>

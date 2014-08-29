@@ -1,7 +1,10 @@
 <apex:component controller="AppController">
-    <apex:attribute name="eid" type="String" assignTo="{!config.eid}" required="false" default="app" description=""/>
+    <apex:attribute name="elemId" type="String" assignTo="{!config.elemId}" required="false" default="app" description=""/>
     <apex:attribute name="debug" type="Boolean" assignTo="{!config.debug}" default="false" description=""/>
+    
     <script>
+        // Init must be called at top of page. As components are pulled in,
+        //   they will register with App. After page is loaded, App can finally start.
         $V.App.init({!configJson});
 
         $(document).ready(function(){
@@ -19,9 +22,10 @@
 
     <apex:includeScript value="{!JqueryJsUrl}"/>
     <apex:includeScript value="{!JqueryTemplateJsUrl}"/>
-    <apex:includeScript value="{!URLFOR($Resource[MobileSplitViewJs])}"/>
+    <apex:includeScript value="{!URLFOR($Resource[MobileSplitViewJs])}"/> <!-- This must be in the App level. -->
     <apex:includeScript value="{!URLFOR($Resource[JqueryMobileJs])}"/>
     <apex:includeScript value="{!URLFOR($Resource[MobileSDKJs])}"/>
+    <apex:includeScript value="{!URLFOR($Resource[ICanHazJs])}"/>
     
     <apex:dynamicComponent componentValue="{!additionalScripts}" rendered="{!debug}"/>
 
@@ -29,14 +33,46 @@
     <apex:stylesheet value="{!URLFOR($Resource.jqmSVcss)}"/>
     <apex:stylesheet value="{!URLFOR($Resource.MobileVisualforceSDKcss)}"/>
 
-    <div id="{!eid}" style="position:absolute; top:0; bottom:0; left:0; right:0;">
+    <div id="{!elemId}" style="position:absolute; top:0; bottom:0; left:0; right:0;">
         <apex:componentBody />
     </div>
     
+    
+    
+    <!-- Templates -->
+    <script id="rowItemTempl" type="text/html">
+    
+      {{#records}}
+      <li data-corners="false"
+          data-shadow="false"
+          data-iconshadow="true"
+          data-wrapperels="div"
+          data-icon="arrow-r" 
+          data-iconpos="right"
+          data-theme="c"
+          class="ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-li-has-thumb ui-btn-up-c">
+          
+        <div class="ui-btn-inner ui-li">
+          <div class="ui-btn-text">
+            <a href="/ThumbnailList#userDetail?Id={{Id}}" class="ui-link-inherit">
+              <img src="{{FullPhotoUrl}}" class="ui-li-thumb">
+              <h3 class="ui-li-heading">{{Name}}</h3>
+              <p class="ui-li-desc">{{Phone}}</p>
+            </a>
+          </div>
+          <span class="ui-icon ui-icon-arrow-r ui-icon-shadow">&nbsp;</span>
+        </div>
+      </li>
+      {{/records}}
+      
+    </script>
+    
+    
+    
+    
     <style>
         body {
-            width:100%; height:100%; 
-            overflow-x: hidden; margin: 0; 
+            width:100%; height:100%; margin: 0; 
             -webkit-text-size-adjust:none;
             -webkit-tap-highlight-color:rgba(0,0,0,0);
             background-image:url('{!URLFOR($Resource.MobileVisualforceSDKImages, 'images/bg.png')}');

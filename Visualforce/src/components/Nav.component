@@ -1,17 +1,20 @@
 <apex:component controller="NavController">
-    <apex:attribute name="eid" type="String" required="true" assignTo="{!config.eid}" description=""/>
+    <apex:includeScript value="{!URLFOR($Resource[NavComponentJS])}"/>
+    
+    <apex:attribute name="elemId" type="String" required="true" assignTo="{!config.elemId}" description=""/>
     <apex:attribute name="pages" type="String" required="true" assignTo="{!config.pages}"
         description="JSON format: [{'page':'<page id or url>','name':'<link name>','iconCls':'<optional icon class>'},...]"/>
-    <apex:attribute name="compHandler" type="String" assignTo="{!config.compHandler}" default="$V.NavComponent" description="Custom Javascript handler to managed client-side lifecycle and behavior"/>
-
-    <div id="{!eid}">
+    <apex:attribute name="jsCtlrName" type="String" assignTo="{!config.jsCtlrName}" default="$V.NavComponent" description="Custom Javascript handler to manage client-side lifecycle and behavior."/>
+    <apex:attribute name="debug" type="Boolean" assignTo="{!config.debug}" default="false" description=""/>
+    
+    <div id="{!elemId}">
         <ul></ul>
     </div><!-- /navbar -->
 
     <script>
-        $V.App.registerComponent('{!eid}', {!configJson});
-        $('#{!eid}').parent().replaceWith(function() {
-            return $('#{!eid}');
+        $V.App.registerComponent('{!config.elemId}', {!configJson});
+        $('#{!config.elemId}').parent().replaceWith(function() {
+            return $('#{!config.elemId}');
         });
     </script>
 </apex:component>

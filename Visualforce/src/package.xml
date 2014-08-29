@@ -1,24 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
-        <members>*</members>
+        <members>AppController</members>
+        <members>AppUtil</members>
+        <members>BaseConfig</members>
+        <members>BaseConfigController</members>
+        <members>ContentController</members>
+        <members>DetailController</members>
+        <members>FooterController</members>
+        <members>HeaderController</members>
+        <members>ListController</members>
+        <members>ThumbnailListController</members>
+        <members>NavController</members>
+        <members>PageController</members>
+        <members>RemoteRequest</members>
+        <members>RemoteResponse</members>
+        <members>SFDCApiClient</members>
+        <members>SFDCPartnerSoap</members>
+        <members>SFDCPartnerSoapFault</members>
+        <members>SObjectController</members>
+        <members>SObjectResponse</members>
+        <members>SchemaManager</members>
+        <members>TestClass</members>
         <name>ApexClass</name>
     </types>
     <types>
-        <members>*</members>
+        <members>App</members>
+        <members>Content</members>
+        <members>Detail</members>
+        <members>Footer</members>
+        <members>Header</members>
+        <members>List</members>
+        <members>ThumbnailList</members>
+        <members>Nav</members>
+        <members>Page</members>
         <name>ApexComponent</name>
     </types>
     <types>
-        <members>*</members>
+        <members>MobilePage</members>
+        <members>ThumbnailList</members>
+        <members>MobilePageWithComponents</members>
+        <members>SplitViewTemplate</members>
         <name>ApexPage</name>
     </types>
     <types>
-        <members>*</members>
-        <name>ApexTrigger</name>
-    </types>
-    <types>
-        <members>*</members>
+        <members>DetailComponentJS</members>
+        <members>ListComponentJS</members>
+        <members>ThumbnailListJS</members>
+        <members>MobileVisualforceSDKImages</members>
+        <members>MobileVisualforceSDKcss</members>
+        <members>MobileVisualforceSDKjs</members>
+        <members>MobileVisualforceSDKjsMin</members>
+        <members>NavComponentJS</members>
+        <members>PageComponentJS</members>
+        <members>jqm11css</members>
+        <members>jqm11js</members>
+        <members>jqm11jsMin</members>
+        <members>jqmSVcss</members>
+        <members>jqmSVjs</members>
+        <members>jqmSVjsMin</members>
+        <members>ICanHaz</members>
         <name>StaticResource</name>
     </types>
-    <version>20.0</version>
+    <version>23.0</version>
 </Package>
